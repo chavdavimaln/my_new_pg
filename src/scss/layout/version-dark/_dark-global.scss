@@ -1,0 +1,458 @@
+
+[data-theme-version="dark"]{
+    .dropdown-menu {
+        background-color: $d-bg;
+		box-shadow: 0px 0px 0px 1px rgba(255, 255, 255,0.1);
+		
+		.dropdown-item {
+			&.selected,
+			&.selected.active,
+			&.active,
+			&:hover, 
+			&:focus {
+				background-color: $dark-card;
+				color: $body-color;
+			}
+		}
+    }
+	.btn-link g [fill]{
+		fill: #fff;
+	}
+	.btn-light:active, 
+	.btn-light:focus, 
+	.btn-light:hover{
+		color:#000;
+	}
+    .form-control {
+        background-color: $d-bg;
+        border-color: $d-border;
+		
+    }
+    .card {
+        background-color: $dark-card;
+		box-shadow:none;
+    }
+	.btn-outline-dark:hover{
+		background-color: $d-bg;
+		border-color: $d-bg;
+	}
+	.tdl-holder input[type=text],
+	.tdl-holder li{
+	    background-color: $dark-card;
+		border-color:$d-border;
+	}
+	.tdl-holder input[type=text]{
+		&::placeholder {
+			color: $d-ctl;
+		}
+	}
+    .tdl-holder label:hover {
+		background-color: $d-border;
+		color: $white;
+	}
+	.text-muted {
+		color: $d-ctl !important;
+	}
+	.modal-content{
+		background:$dark-card;
+	}
+	.modal-footer,
+	.modal-header{
+		border-color: $d-border;
+	}
+	.close{
+	    font-weight: 400;
+		color: $white;
+		text-shadow: none;
+		
+		&:hover{
+			color: $white;
+		}
+	}
+	.header-left .dashboard_bar,
+	.star-review span,
+	.table strong {
+		color: #fff;
+	}
+	.text-dark {
+		color: $d-ctl !important;
+	}
+	.star-rating .product-review,
+	.new-arrival-content .item{
+		color: $white;
+	}
+	.custom-dropdown .dropdown-menu{
+		border-color: $d-border;
+	}
+	.widget-stat .media > span{
+	    background: $d-border;
+	    border-color: $d-border;
+		color:$white;
+	}
+	.plus-minus-input .custom-btn{
+		background: $d-bg;
+	    border-color: $d-border;
+	}
+	.dropdown-divider,
+	.size-filter ul li{
+		border-color: $d-border;
+	}
+	.custom-select{
+	    border-color: $d-border;
+		color: $d-ctl;
+		background:$d-bg;
+	}
+	.nav-tabs{
+		border-color: $d-border;
+	}
+	.mail-list .list-group-item.active i {
+		color: $white;
+	}
+	hr{
+		border-color: rgba(255,255,255,0.7);
+	}
+	.grid-col{
+		background:$d-bg;
+	}
+	
+	.noUi-target{
+		border-color:$d-border;
+		border-radius: 8px;
+		box-shadow: none;
+		
+		.noUi-connects{
+			background:$d-border;
+		}
+	}
+	.noUi-marker-large,
+	.noUi-marker{
+		background:$d-border;
+	}
+	.input-group-text{
+		background:$dark-card;
+		border-color:$d-border;
+		
+	}
+	.note-editor.note-frame{
+		border-color:$d-border;
+		.btn{
+			color:$white;
+		}
+		.note-editing-area .note-editable{
+			color:$white;
+		}
+	}
+	.widget-media .timeline .timeline-panel{
+		border-color:$d-border; 
+	}
+	.notification_dropdown .dropdown-menu-right .all-notification{
+		border-color:$d-border; 
+	}
+	#user-activity .nav-tabs .nav-link{
+		border-color:$d-border; 
+	}
+	.list-group-item-action{
+		color:$body-color;
+	}
+	.list-group-item-action:focus, 
+	.list-group-item-action:hover, 
+	.list-group-item-action:focus{
+		background-color:$d-bg; 
+		border-color:$d-bg; 
+	}
+	.list-group-item.active{
+		color:$white;
+		border-color:$primary;
+		&:focus, 
+		&:hover, 
+		&:focus{
+			background-color:$primary; 
+			border-color:$primary; 
+			color:$white;
+		}
+	}
+	.swal2-popup{
+		background:$dark-card;
+	}	
+	.form-head .btn-outline-primary{
+		border-color:$d-border;
+	}
+	.form-head .btn-outline-primary:hover{
+		border-color:$primary;
+	}
+	.review-tab.nav-pills li a.nav-link{
+		background:lighten($dark-card, 5);
+	}
+	.review-tab.nav-pills li a.nav-link{
+		background:lighten($dark-card, 5);
+		&.active{
+			color:$white;
+			background:$primary;
+		}
+	}
+	.header-right .header-profile > a.nav-link .header-info span,
+	.review-table .media-body p,
+	.iconbox small,
+	.doctor-info-details .media-body p{
+		color:$white;
+	}
+	.iconbox p,
+	.doctor-info-details .media-body span{
+		color:rgba(255,255,255,0.7);
+	}
+	.best-doctor .timeline .timeline-panel{
+		background:$dark-card !important;
+	}
+	.doctor-list .accordion__header-line{
+		background:$d-border;
+	}
+	.review-table .disease,
+	.review-table,
+	.review-box{
+		border-color:$d-border;
+	}
+	.form-head .search-area{ 
+		.form-control{
+			border:1px solid $dark-card;
+			background:$dark-card;
+		}
+		.input-group-text{
+			background:$dark-card;
+		}
+	}
+	.patient-activity tbody tr{
+	    box-shadow: 0 1px 0 0 $d-border;
+	}
+	.plus-box{
+	    background: rgba(255,255,255,0.05);
+		color: #fff;
+	}
+	.default-select{
+		&.style-1{
+			.btn{
+				color:$white!important;
+				border-color:$d-bg!important;
+			}
+		}
+	}
+	.text-black{
+		color:$white!important;
+	}
+	.new-arrival-content {
+		 h4 {
+			a{
+				color:$white;
+			}
+		 }
+	}
+	.abilities-chart .ct-chart .ct-label{
+		fill:$white;
+	}
+	.apexcharts-legend-text{
+		color:$white!important;
+	}
+	.morris_chart_height text tspan{
+		fill:$white!important;
+	}
+	.btn-link{
+		color:$white;
+	}
+	.apexcharts-text tspan{
+		fill:white;
+	}
+	
+	.text-primary{
+		color:rgba(255,255,255,0.9)!important;
+	}
+	#chartBar{
+		line{
+			stroke:$d-border;
+		}		
+	}
+	.doctor-list .accordion__header-alphabet{
+		color:$white;
+	}
+	.iconbox i{
+		background-color:$d-bg;
+	}
+	.svg-area .card-header{
+		color:$white;
+	}
+	.svg-icons-ov.style-1 .svg-icons-prev{
+		background-color:$d-bg;
+	}
+	.svg-icons-ov,
+	.cm-content-box .cm-content-body,
+	.table thead th,
+	.datepicker.datepicker-dropdown,
+	.menu-tabs,
+	.form-check-input,
+	.dd .accordion-body,.cm-content-box.style-1 .content-title,.author-profile .info-list li,.author-profile .card-footer .form-control{
+		border-color:$d-border;
+	}
+	.cm-content-box{
+		background-color:$dark-card;
+	}
+	.dd-handle.move-media + .accordion-button{
+		background-color:$d-bg;
+		color:$white;
+	}
+	.accordion-button:not(.collapsed)::after{
+		filter:brightness(2.5);
+	}
+	.new-scroll{
+		background-color:$d-bg;
+	}
+	.compose-content .dropzone{
+		background:$d-bg !important;
+		border-color:$d-border;
+	}
+	.fc-theme-standard td, .fc-theme-standard th,.fc .fc-button-group > .fc-button,.fc-theme-standard .fc-scrollgrid.fc-scrollgrid-liquid, .fc-scrollgrid, table{
+		border-color:$d-border;
+	}
+	.fc-daygrid-dot-event{
+		background-color:$d-bg;
+		border-color:$d-border;
+	}
+	.btn-close{
+		background:transparent url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23000'%3e%3cpath fill='white' d='M.293.293a1 1 0 011.414 0L8 6.586 14.293.293a1 1 0 111.414 1.414L9.414 8l6.293 6.293a1 1 0 01-1.414 1.414L8 9.414l-6.293 6.293a1 1 0 01-1.414-1.414L6.586 8 .293 1.707a1 1 0 010-1.414z'/%3e%3c/svg%3e") center/1em auto no-repeat;
+	}
+	.tab-with-icon{
+		.nav-link{
+			&.active{
+				border-color:$d-border;
+				color:$white;
+			}
+		} 
+		&:hover{
+			border-color:$d-border;
+			color:$white;
+		}
+	}
+	.border-end{
+		border-color:$d-border!important;
+	}
+	.daterangepicker,
+	.daterangepicker .calendar-table,.daterangepicker td.off{
+		background-color:$d-bg;
+	}
+	.daterangepicker .calendar-table table{
+		border-color:$d-border;
+	}
+	.clockpicker-popover .popover-content{
+		background-color:$dark-card;
+	}
+	.clockpicker-plate{
+		background-color:$d-bg;
+	}
+	.clockpicker-popover .popover-title{
+		background-color:$d-bg;
+		color:$white;
+	}
+	.paging_simple_numbers.dataTables_paginate{
+		background-color:$d-bg;
+	}
+	.search-area{
+		.input-group-text{
+			background-color:$dark-card;
+			border:0;
+		}
+		.form-control{
+			background-color:$dark-card;
+		}
+	}
+	.menu-toggle .deznav .metismenu li > ul {
+		background-color:$dark-card!important;
+	}
+	.notification_dropdown .dropdown-menu-end .all-notification{
+		border-color:$d-border;
+	}
+	.assigned-doctor .owl-next, .assigned-doctor .owl-prev{
+		background-color:$d-bg!important;
+	}
+	.sidebar-right .bootstrap-select .btn{
+		border-color:$border!important;
+		.dropdown-menu{
+			background-color:$white!important;
+		}
+	}
+	.sidebar-right{
+		.dropdown-menu{
+			background-color:$white!important;
+			box-shadow: 0px 0px 40px 0px rgba(82, 63, 105, 0.1);
+			.dropdown-item{
+				&.active{
+					background-color:var(--rgba-primary-1);
+					color:var(--primary)l
+				}
+				&:hover{
+					background-color:var(--rgba-primary-1);
+				}
+			}
+		}
+		.form-control{
+			background-color:$white;
+		}
+	}
+	.ck.ck-editor .ck-content{
+		background-color:$d-bg!important;
+	 }
+	 .ck.ck-editor .ck.ck-toolbar{
+		background-color:$d-bg;
+	 }
+	 .ck.ck-content.ck-editor__editable.ck-rounded-corners.ck-editor__editable_inline.ck-blurred{
+		border-color:$d-border;
+	 }
+	 .ck.ck-toolbar .ck.ck-toolbar__separator{
+		background-color:$d-border;
+	 }
+	 .note-editor.note-frame .note-editing-area .note-editable{
+		background-color:$d-bg;
+	 }
+	 .note-editor.note-frame .note-status-output{
+		border-color:$d-border;
+	 
+	 }
+	 .note-editor.note-frame .note-statusbar{
+		background-color:$dark-card;
+		border-color:$d-border;
+	 }
+	 .dtp > .dtp-content{
+		background-color:$d-bg;
+	 }
+	 .dtp table.dtp-picker-days tr > td > a, .dtp .dtp-picker-time > a{
+		color:rgba(255,255,255,0.7);
+	 }
+	 .card-ui-default{
+		.text-primary{
+			color:var(--primary)!important;
+		}
+	 }
+	 .accordion-danger-solid{
+		.accordion-button{
+			border-color:#f72b50;
+		}
+	}
+	.table{
+		&.table-striped,
+		&.table-clear{
+			th,td{
+				color:rgba(255,255,255,0.7);
+			}
+		}
+	} 
+	.sidebar-right .card-tabs .nav-tabs{
+		border-color:transparent;
+	}
+
+	.select-button {		
+		color: $white;
+	}	
+	.select-box {
+		.form-select {
+			border-color: rgb(215, 218, 227);  
+			
+		}		
+	}
+}
+

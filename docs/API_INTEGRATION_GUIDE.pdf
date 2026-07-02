@@ -1,0 +1,148 @@
+%PDF-1.4
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [3 0 R] /Count 1 >>
+endobj
+3 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 4 0 R >> >> /Contents 5 0 R >>
+endobj
+4 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+5 0 obj
+<< /Length 1745 >>
+stream
+BT
+/F1 11 Tf
+45 800 Td
+(Jay Ambe PG API Integration Guide) Tj
+0 -14 Td
+() Tj
+0 -14 Td
+(Jay Ambe PG API Integration Guide) Tj
+0 -14 Td
+() Tj
+0 -14 Td
+(1. Where React Reads Data Today) Tj
+0 -14 Td
+() Tj
+0 -14 Td
+(Temporary browser storage helpers are here:) Tj
+0 -14 Td
+() Tj
+0 -14 Td
+(```text) Tj
+0 -14 Td
+(src/pgadmin/Utils/pgRequirementStore.js) Tj
+0 -14 Td
+(src/pgadmin/Utils/allocationHelper.js) Tj
+0 -14 Td
+(src/pgadmin/Utils/paymentHelper.js) Tj
+0 -14 Td
+(src/pgadmin/Utils/adminAuth.js) Tj
+0 -14 Td
+(```) Tj
+0 -14 Td
+() Tj
+0 -14 Td
+(When Node.js API is ready, replace localStorage reads/writes in these files with API) Tj
+0 -14 Td
+(calls.) Tj
+0 -14 Td
+() Tj
+0 -14 Td
+(2. API Base URL) Tj
+0 -14 Td
+() Tj
+0 -14 Td
+(Set this in `.env`:) Tj
+0 -14 Td
+() Tj
+0 -14 Td
+(```text) Tj
+0 -14 Td
+(REACT_APP_API_BASE_URL=https://your-domain.com/api) Tj
+0 -14 Td
+(```) Tj
+0 -14 Td
+() Tj
+0 -14 Td
+(Create an Axios client in:) Tj
+0 -14 Td
+() Tj
+0 -14 Td
+(```text) Tj
+0 -14 Td
+(src/pgadmin/Utils/apiClient.js) Tj
+0 -14 Td
+(```) Tj
+0 -14 Td
+() Tj
+0 -14 Td
+(Recommended client:) Tj
+0 -14 Td
+() Tj
+0 -14 Td
+(```js) Tj
+0 -14 Td
+(import axios from "axios";) Tj
+0 -14 Td
+() Tj
+0 -14 Td
+(const apiClient = axios.create\({) Tj
+0 -14 Td
+(baseURL: process.env.REACT_APP_API_BASE_URL,) Tj
+0 -14 Td
+(withCredentials: true,) Tj
+0 -14 Td
+(}\);) Tj
+0 -14 Td
+() Tj
+0 -14 Td
+(export default apiClient;) Tj
+0 -14 Td
+(```) Tj
+0 -14 Td
+() Tj
+0 -14 Td
+(3. Required API Routes) Tj
+0 -14 Td
+() Tj
+0 -14 Td
+(Authentication:) Tj
+0 -14 Td
+() Tj
+0 -14 Td
+(- `POST /auth/login`) Tj
+0 -14 Td
+(- `POST /auth/logout`) Tj
+0 -14 Td
+(- `GET /auth/me`) Tj
+0 -14 Td
+() Tj
+0 -14 Td
+(Dashboard:) Tj
+0 -14 Td
+() Tj
+0 -14 Td
+(- `GET /dashboard/overview`) Tj
+0 -14 Td
+(- `GET /action-center`) Tj
+ET
+endstream
+endobj
+xref
+0 6
+0000000000 65535 f 
+0000000009 00000 n 
+0000000058 00000 n 
+0000000115 00000 n 
+0000000241 00000 n 
+0000000311 00000 n 
+trailer
+<< /Size 6 /Root 1 0 R >>
+startxref
+2108
+%%EOF

@@ -1,0 +1,42 @@
+%PDF-1.4
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [5 0 R 7 0 R] /Count 2 >>
+endobj
+3 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+4 0 obj
+<< /Length 1387 >>
+stream
+BT /F1 10 Tf 42 790 Td 14 TL (# Jay Ambe PG Live Server + MySQL Setup Guide) Tj T* () Tj T* (## Required Stack) Tj T* () Tj T* (- Node.js) Tj T* (- React) Tj T* (- MySQL 8+) Tj T* (- Bootstrap) Tj T* (- Tailwind CSS) Tj T* () Tj T* (## Frontend Build) Tj T* () Tj T* (1. Open terminal in `payingguest`.) Tj T* (2. Install dependencies:) Tj T* (   `npm install`) Tj T* (3. Build React:) Tj T* (   `npm run build`) Tj T* (4. Upload the `build` folder to your live hosting panel or serve it using Node/Nginx/Apache.) Tj T* () Tj T* (## MySQL Setup) Tj T* () Tj T* (1. Create a MySQL database on the live server.) Tj T* (2. Recommended database name: `jay_ambe_pg`.) Tj T* (3. Import this SQL file:) Tj T* (   `database/mysql/jay_ambe_pg_schema.sql`) Tj T* (4. Confirm these important tables exist:) Tj T* (   `students`, `admissions`, `buildings`, `floors`, `rooms`, `room_items`, `allocations`,) Tj T* (`payments`, `expenses`, `inquiries`, `support_tickets`, `invoices`, `calendar_events`,) Tj T* (`staff`, `roles`, `admins`.) Tj T* () Tj T* (## Environment Variables) Tj T* () Tj T* (Create `.env` from `.env.example`.) Tj T* () Tj T* (Required values:) Tj T* () Tj T* (- `REACT_APP_API_BASE_URL`) Tj T* (- `MYSQL_HOST`) Tj T* (- `MYSQL_PORT`) Tj T* (- `MYSQL_DATABASE`) Tj T* (- `MYSQL_USER`) Tj T* (- `MYSQL_PASSWORD`) Tj T* () Tj T* (Optional payment/message values:) Tj T* () Tj T* ET
+endstream
+endobj
+5 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R >> >> /Contents 4 0 R >>
+endobj
+6 0 obj
+<< /Length 968 >>
+stream
+BT /F1 10 Tf 42 790 Td 14 TL (- `RAZORPAY_KEY_ID`) Tj T* (- `RAZORPAY_KEY_SECRET`) Tj T* (- `WHATSAPP_PROVIDER`) Tj T* (- `WHATSAPP_ACCESS_TOKEN`) Tj T* (- `WHATSAPP_PHONE_NUMBER_ID`) Tj T* () Tj T* (## Login) Tj T* () Tj T* (Frontend local-storage demo login:) Tj T* () Tj T* (- Username: `superadmin`) Tj T* (- Password: `admin123`) Tj T* () Tj T* (Live backend login should use the `admins` table with bcrypt password hashes.) Tj T* () Tj T* (## Important URLs) Tj T* () Tj T* (- `/` redirects to `/pg/login`) Tj T* (- `/pg/login` is the PG login page) Tj T* (- `/pg` is the main dashboard) Tj T* () Tj T* (## Deployment Notes) Tj T* () Tj T* (- Browser React code must not connect directly to MySQL.) Tj T* (- Create a Node.js API between React and MySQL.) Tj T* (- Replace localStorage helper functions in `src/pgadmin/Utils` with API calls when the) Tj T* (backend is ready.) Tj T* (- Keep uploaded files outside React source, then save paths in MySQL.) Tj T* ET
+endstream
+endobj
+7 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R >> >> /Contents 6 0 R >>
+endobj
+xref
+0 8
+0000000000 65535 f 
+0000000009 00000 n 
+0000000058 00000 n 
+0000000121 00000 n 
+0000000191 00000 n 
+0000001630 00000 n 
+0000001756 00000 n 
+0000002775 00000 n 
+trailer << /Size 8 /Root 1 0 R >>
+startxref
+2901
+%%EOF

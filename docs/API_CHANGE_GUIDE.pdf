@@ -1,0 +1,53 @@
+%PDF-1.4
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [5 0 R 7 0 R 9 0 R] /Count 3 >>
+endobj
+3 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+4 0 obj
+<< /Length 1324 >>
+stream
+BT /F1 10 Tf 42 790 Td 14 TL (# Jay Ambe PG API Change Guide) Tj T* () Tj T* (## Where API Calls Will Be Added) Tj T* () Tj T* (Current demo data is stored in localStorage. Replace these files first:) Tj T* () Tj T* (- `src/pgadmin/Utils/pgRequirementStore.js`) Tj T* (- `src/pgadmin/Utils/allocationHelper.js`) Tj T* (- `src/pgadmin/Utils/paymentHelper.js`) Tj T* (- `src/pgadmin/Utils/adminAuth.js`) Tj T* () Tj T* (## Recommended Node.js API Routes) Tj T* () Tj T* (Authentication:) Tj T* () Tj T* (- `POST /api/auth/login`) Tj T* (- `POST /api/auth/logout`) Tj T* (- `GET /api/auth/me`) Tj T* () Tj T* (Dashboard:) Tj T* () Tj T* (- `GET /api/dashboard/overview`) Tj T* (- `GET /api/action-center`) Tj T* () Tj T* (Properties:) Tj T* () Tj T* (- `GET /api/buildings`) Tj T* (- `POST /api/buildings`) Tj T* (- `POST /api/buildings/:id/floors`) Tj T* (- `GET /api/rooms`) Tj T* (- `POST /api/rooms`) Tj T* (- `PUT /api/rooms/:id`) Tj T* (- `DELETE /api/rooms/:id`) Tj T* (- `PUT /api/rooms/:id/layout`) Tj T* () Tj T* (Students and admissions:) Tj T* () Tj T* (- `GET /api/students`) Tj T* (- `POST /api/students`) Tj T* (- `PUT /api/students/:id`) Tj T* (- `GET /api/admissions`) Tj T* (- `POST /api/admissions`) Tj T* (- `PATCH /api/admissions/:id/approve`) Tj T* (- `PATCH /api/admissions/:id/reject`) Tj T* () Tj T* ET
+endstream
+endobj
+5 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R >> >> /Contents 4 0 R >>
+endobj
+6 0 obj
+<< /Length 1406 >>
+stream
+BT /F1 10 Tf 42 790 Td 14 TL (Inquiries:) Tj T* () Tj T* (- `GET /api/inquiries`) Tj T* (- `POST /api/inquiries`) Tj T* (- `PUT /api/inquiries/:id`) Tj T* (- `PATCH /api/inquiries/:id/status`) Tj T* (- `POST /api/inquiries/import-csv`) Tj T* () Tj T* (Tickets:) Tj T* () Tj T* (- `GET /api/tickets`) Tj T* (- `POST /api/tickets`) Tj T* (- `PUT /api/tickets/:id`) Tj T* (- `PATCH /api/tickets/:id/status`) Tj T* () Tj T* (Payments and income:) Tj T* () Tj T* (- `GET /api/payments`) Tj T* (- `POST /api/payments`) Tj T* (- `GET /api/invoices`) Tj T* (- `POST /api/invoices`) Tj T* (- `GET /api/invoices/:id/pdf`) Tj T* (- `POST /api/payments/razorpay/order`) Tj T* (- `POST /api/payments/razorpay/verify`) Tj T* () Tj T* (Expenses:) Tj T* () Tj T* (- `GET /api/expenses`) Tj T* (- `POST /api/expenses`) Tj T* (- `DELETE /api/expenses/:id`) Tj T* () Tj T* (Reports:) Tj T* () Tj T* (- `GET /api/reports/income?format=excel|pdf`) Tj T* (- `GET /api/reports/expenses?format=excel|pdf`) Tj T* (- `GET /api/reports/profit?format=excel|pdf`) Tj T* (- `GET /api/reports/students?format=excel|pdf`) Tj T* (- `GET /api/reports/occupancy?format=excel|pdf`) Tj T* (- `GET /api/reports/inquiries?format=excel|pdf`) Tj T* (- `GET /api/reports/tickets?format=excel|pdf`) Tj T* (- `GET /api/reports/transfers?format=excel|pdf`) Tj T* () Tj T* (Calendar and messages:) Tj T* () Tj T* (- `GET /api/calendar/events`) Tj T* ET
+endstream
+endobj
+7 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R >> >> /Contents 6 0 R >>
+endobj
+8 0 obj
+<< /Length 1594 >>
+stream
+BT /F1 10 Tf 42 790 Td 14 TL (- `POST /api/calendar/events`) Tj T* (- `GET /api/messages`) Tj T* (- `POST /api/messages/send`) Tj T* (- `POST /api/whatsapp/send-template`) Tj T* () Tj T* (Transfers:) Tj T* () Tj T* (- `GET /api/transfers`) Tj T* (- `POST /api/transfers`) Tj T* () Tj T* (Settings:) Tj T* () Tj T* (- `GET /api/settings`) Tj T* (- `PUT /api/settings`) Tj T* (- `GET /api/validation-preferences`) Tj T* (- `PUT /api/validation-preferences`) Tj T* () Tj T* (## Frontend Files By Module) Tj T* () Tj T* (- Dashboard: `src/pgadmin/Pages/Dashboard/Dashboard.jsx`) Tj T* (- Action Center: `src/pgadmin/Pages/Requirements/ActionCenter.jsx`) Tj T* (- Properties: `src/pgadmin/Pages/Requirements/PropertyManagement.jsx`) Tj T* (- Calendar: `src/pgadmin/Pages/Requirements/CalendarOperations.jsx`) Tj T* (- Inquiries: `src/pgadmin/Pages/Requirements/Inquiries.jsx`) Tj T* (- Tickets: `src/pgadmin/Pages/Requirements/MaintenanceTickets.jsx`) Tj T* (- Income: `src/pgadmin/Pages/Requirements/PaymentOperations.jsx`) Tj T* (- Expenses: `src/pgadmin/Pages/Requirements/AccountingManagement.jsx`) Tj T* (- Reports: `src/pgadmin/Pages/Requirements/Reports.jsx`) Tj T* (- Transfers: `src/pgadmin/Pages/Requirements/TransferHistory.jsx`) Tj T* () Tj T* (## Validation) Tj T* () Tj T* (Validation is soft by default. Enable stricter validation from:) Tj T* () Tj T* (- React helper: `validateSoft` in `pgRequirementStore.js`) Tj T* (- MySQL table: `validation_preferences`) Tj T* () Tj T* (## Live Server Rule) Tj T* () Tj T* (React calls Node.js API only. Node.js API connects to MySQL.) Tj T* ET
+endstream
+endobj
+9 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R >> >> /Contents 8 0 R >>
+endobj
+xref
+0 10
+0000000000 65535 f 
+0000000009 00000 n 
+0000000058 00000 n 
+0000000127 00000 n 
+0000000197 00000 n 
+0000001573 00000 n 
+0000001699 00000 n 
+0000003157 00000 n 
+0000003283 00000 n 
+0000004929 00000 n 
+trailer << /Size 10 /Root 1 0 R >>
+startxref
+5055
+%%EOF

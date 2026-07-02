@@ -1,0 +1,83 @@
+{
+  "name": "mediqu",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@ckeditor/ckeditor5-build-classic": "^41.4.2",
+    "@ckeditor/ckeditor5-react": "^11.2.0",
+    "@fullcalendar/daygrid": "^6.1.8",
+    "@fullcalendar/interaction": "^6.1.8",
+    "@fullcalendar/react": "^6.1.8",
+    "@fullcalendar/timegrid": "^6.1.8",
+    "@icons/material": "^0.4.1",
+    "@loadable/component": "^5.15.3",
+    "@n8tb1t/use-scroll-position": "^2.0.3",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.2",
+    "@testing-library/user-event": "^14.6.1",
+    "apexcharts": "^5.15.0",
+    "autoprefixer": "^10.5.0",
+    "axios": "^1.4.0",
+    "chart.js": "^4.3.3",
+    "formik": "^2.4.3",
+    "lightgallery": "^2.7.1",
+    "lucide-react": "^1.22.0",
+    "p-min-delay": "^4.0.2",
+    "postcss": "^8.5.15",
+    "react": "^18.3.1",
+    "react-apexcharts": "^2.1.0",
+    "react-calendar": "^6.0.1",
+    "react-chartjs-2": "^5.2.0",
+    "react-color": "^2.19.3",
+    "react-dom": "^18.3.1",
+    "react-draggable": "^4.7.0",
+    "react-dropzone-uploader": "^2.11.0",
+    "react-form-stepper": "^2.0.3",
+    "react-linear-gradient-picker": "^5.0.0",
+    "react-nestable": "^3.0.2",
+    "react-redux": "^9.3.0",
+    "react-resize-detector": "^12.3.0",
+    "react-router-dom": "^7.18.0",
+    "react-scripts": "^5.0.1",
+    "react-select": "^5.7.4",
+    "react-slick": "^0.31.0",
+    "react-sparklines": "^1.7.0",
+    "react-table": "^7.8.0",
+    "react-time-picker": "^8.0.3",
+    "react-toastify": "^11.1.0",
+    "recharts": "^3.8.1",
+    "redux": "^5.0.1",
+    "redux-thunk": "^3.1.0",
+    "sass": "^1.101.0",
+    "slick-carousel": "^1.8.1",
+    "sweetalert2": "^11.7.23",
+    "tailwindcss": "^3.4.19",
+    "web-vitals": "^5.3.0",
+    "yup": "^1.2.0"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject",
+    "sass": "sass --watch src/scss/main.scss:src/css/style.css"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
+}
