@@ -111,6 +111,12 @@
     }
 }
 
+.pg-app-shell .pg-sidebar-link,
+.pg-app-shell .pg-sidebar-link span {
+    font-size: 13px !important;
+    line-height: 1.25rem;
+}
+
 .pg-app-shell .fc {
     --fc-border-color: #e2e8f0;
     --fc-button-bg-color: #ffffff;

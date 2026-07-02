@@ -62,11 +62,15 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
     const location = useLocation();
     const navigate = useNavigate();
     const currentAdmin = getCurrentAdmin();
-    const [openMenus, setOpenMenus] = useState({ Properties: true, Tickets: true });
+    const [openMenus, setOpenMenus] = useState({});
 
     const closeMobileSidebar = () => setSidebarOpen(false);
     const isActive = (to) => location.pathname === pgPath(to);
-    const hasActiveChild = (children = []) => children.some((child) => location.pathname === pgPath(child.to));
+    const isChildRouteActive = (to) => {
+        const childPath = pgPath(to);
+        return location.pathname === childPath || location.pathname.startsWith(`${childPath}/`);
+    };
+    const hasActiveChild = (children = []) => children.some((child) => isChildRouteActive(child.to));
 
     const handleLogout = () => {
         logoutAdmin();
@@ -100,24 +104,28 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
 
                 <nav className="h-[calc(100vh-7.25rem)] overflow-y-auto px-3 py-3">
                     <ul className="space-y-0.5">
-                        {menuItems.map(({ to, label, icon: Icon, children }) => (
-                            <li key={label}>
-                                {children ? (
+                        {menuItems.map(({ to, label, icon: Icon, children }) => {
+                            const activeChild = hasActiveChild(children);
+                            const menuOpen = Boolean(openMenus[label] || activeChild);
+
+                            return (
+                                <li key={label}>
+                                    {children ? (
                                     <>
                                         <button
                                             type="button"
                                             onClick={() => setOpenMenus({ ...openMenus, [label]: !openMenus[label] })}
                                             className={`pg-sidebar-link flex w-full items-center gap-2 rounded-lg px-3 py-1.5 text-left transition ${
-                                                hasActiveChild(children)
+                                                activeChild
                                                     ? "bg-violet-600 text-white shadow-sm"
                                                     : "text-slate-600 hover:bg-slate-100 hover:text-violet-700"
                                             }`}
                                         >
                                             <Icon size={15} />
                                             <span className="flex-1 truncate">{label}</span>
-                                            {openMenus[label] ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
+                                            {menuOpen ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
                                         </button>
-                                        {openMenus[label] && (
+                                        {menuOpen && (
                                             <ul className="ml-5 mt-1 space-y-0.5 border-l border-violet-100 pl-2">
                                                 {children.map((child) => (
                                                     <li key={child.to}>
@@ -137,7 +145,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                                             </ul>
                                         )}
                                     </>
-                                ) : (
+                                    ) : (
                                     <Link
                                         to={pgPath(to)}
                                         onClick={closeMobileSidebar}
@@ -150,9 +158,10 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                                         <Icon size={15} />
                                         <span className="truncate">{label}</span>
                                     </Link>
-                                )}
-                            </li>
-                        ))}
+                                    )}
+                                </li>
+                            );
+                        })}
                     </ul>
                 </nav>
 
