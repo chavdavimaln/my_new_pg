@@ -1,4 +1,5 @@
 import { getStoredAllocations, getStoredRooms, getStoredStudents, saveStoredStudents } from "./allocationHelper";
+import { recordCollectionHistory, recordHistory } from "./historyStore";
 import { formatCurrency, getStoredPayments } from "./paymentHelper";
 
 const ADMISSIONS_KEY = "pgAdmissions";
@@ -29,6 +30,13 @@ export const readArray = (key) => {
 };
 
 export const writeArray = (key, value) => {
+    recordCollectionHistory({
+        module: key.replace(/^pg/, "").replace(/([A-Z])/g, " $1").trim() || key,
+        entityType: "Record",
+        previous: readArray(key),
+        next: value,
+        action: "Updated",
+    });
     localStorage.setItem(key, JSON.stringify((value || []).filter(Boolean)));
 };
 
@@ -119,6 +127,15 @@ export const getRoomPropertyAssignments = () => {
 };
 
 export const saveRoomPropertyAssignments = (assignments) => {
+    recordHistory({
+        module: "Room Property Assignments",
+        entityType: "Assignment Map",
+        entityId: "room-property-assignments",
+        entityName: "Room Property Assignments",
+        action: "Updated",
+        before: getRoomPropertyAssignments(),
+        after: assignments,
+    });
     localStorage.setItem(ROOM_PROPERTY_ASSIGNMENTS_KEY, JSON.stringify(assignments || {}));
 };
 
@@ -138,7 +155,10 @@ export const getValidationPreferences = () => {
 };
 
 export const saveValidationPreferences = (preferences) => {
-    localStorage.setItem(VALIDATION_KEY, JSON.stringify({ ...getValidationPreferences(), ...preferences }));
+    const before = getValidationPreferences();
+    const after = { ...before, ...preferences };
+    recordHistory({ module: "Settings", entityType: "Validation Preferences", entityId: "validation", entityName: "Validation Preferences", action: "Updated", before, after });
+    localStorage.setItem(VALIDATION_KEY, JSON.stringify(after));
 };
 
 export const validateSoft = (values, rules = {}) => {
@@ -172,7 +192,10 @@ export const getPgSettings = () => {
 };
 
 export const savePgSettings = (settings) => {
-    localStorage.setItem(SETTINGS_KEY, JSON.stringify({ ...getPgSettings(), ...settings }));
+    const before = getPgSettings();
+    const after = { ...before, ...settings };
+    recordHistory({ module: "Settings", entityType: "PG Settings", entityId: "pg-settings", entityName: "PG Settings", action: "Updated", before, after });
+    localStorage.setItem(SETTINGS_KEY, JSON.stringify(after));
 };
 
 export const approveAdmission = (admissionId) => {

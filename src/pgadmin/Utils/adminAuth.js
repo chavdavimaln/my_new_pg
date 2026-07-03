@@ -3,6 +3,14 @@ const CURRENT_ADMIN_KEY = "currentAdmin";
 
 export const adminRoles = {
     SUPER: "super-admin",
+    HOSTEL_ADMIN: "hostel-admin",
+    WARDEN: "warden",
+    RECEPTIONIST: "receptionist",
+    ACCOUNTANT: "accountant",
+    MAINTENANCE_MANAGER: "maintenance-manager",
+    SECURITY_GUARD: "security-guard",
+    MESS_MANAGER: "mess-manager",
+    HOUSEKEEPING: "housekeeping",
     SINGLE: "single-admin",
     SUB: "sub-admin",
 };
@@ -22,10 +30,117 @@ export const privilegeOptions = [
     { key: "calendar", label: "Calendar" },
     { key: "transfers", label: "Transfer History" },
     { key: "reports", label: "Reports" },
+    { key: "billingSettings", label: "Billing Settings" },
+    { key: "hostelSettings", label: "Hostel Settings" },
+    { key: "systemConfig", label: "System Configuration" },
+    { key: "databaseBackup", label: "Database Backup" },
+    { key: "auditLogs", label: "Audit Logs" },
+    { key: "staff", label: "Staff Management" },
+    { key: "visitors", label: "Visitors / Guests" },
+    { key: "attendance", label: "Attendance" },
+    { key: "mess", label: "Mess Management" },
+    { key: "housekeeping", label: "Housekeeping" },
     { key: "settings", label: "Settings" },
     { key: "adminProfile", label: "Admin Profile" },
     { key: "adminUsers", label: "Admin Users" },
 ];
+
+const allPrivileges = privilegeOptions.map((option) => option.key);
+
+export const roleDefinitions = [
+    {
+        key: adminRoles.SUPER,
+        label: "Super Admin",
+        responsibilities: [
+            "Create Admin Users",
+            "Delete Users",
+            "Reset Passwords",
+            "Assign Roles",
+            "View All Reports",
+            "Billing Settings",
+            "Hostel Settings",
+            "System Configuration",
+            "Database Backup",
+            "Audit Logs",
+        ],
+        permissions: allPrivileges,
+        limited: "Full access",
+    },
+    {
+        key: adminRoles.HOSTEL_ADMIN,
+        label: "Hostel Admin",
+        responsibilities: ["Room Management", "Student Management", "Payments", "Maintenance", "Visitors", "Complaints", "Reports"],
+        permissions: ["dashboard", "rooms", "profiles", "allocation", "allotments", "payments", "property", "admissions", "inquiries", "tickets", "messages", "calendar", "transfers", "reports", "visitors"],
+        limited: "Cannot delete Super Admin, manage roles, change system settings, or run database backup",
+    },
+    {
+        key: adminRoles.WARDEN,
+        label: "Warden / Receptionist",
+        responsibilities: ["Student Check-in", "Student Check-out", "Attendance", "Visitor Approval", "Complaint Verification"],
+        permissions: ["dashboard", "profiles", "allocation", "admissions", "inquiries", "tickets", "calendar", "visitors", "attendance"],
+    },
+    {
+        key: adminRoles.RECEPTIONIST,
+        label: "Receptionist",
+        responsibilities: ["New Admission", "Student Registration", "Bed Allocation", "Room Availability", "Inquiry Handling"],
+        permissions: ["dashboard", "rooms", "profiles", "allocation", "admissions", "inquiries", "calendar", "visitors"],
+    },
+    {
+        key: adminRoles.ACCOUNTANT,
+        label: "Accountant",
+        responsibilities: ["Rent Collection", "Generate Invoice", "Expenses", "Refunds", "Reports"],
+        permissions: ["dashboard", "payments", "reports", "billingSettings"],
+    },
+    {
+        key: adminRoles.MAINTENANCE_MANAGER,
+        label: "Maintenance Manager",
+        responsibilities: ["Maintenance Tickets", "Assign Staff", "Track Complaints", "Inventory"],
+        permissions: ["dashboard", "tickets", "staff", "reports"],
+    },
+    {
+        key: adminRoles.SECURITY_GUARD,
+        label: "Security Guard",
+        responsibilities: ["Visitor Entry", "Visitor Exit", "Gate Pass", "Night Attendance"],
+        permissions: ["dashboard", "visitors", "attendance"],
+    },
+    {
+        key: adminRoles.MESS_MANAGER,
+        label: "Mess Manager",
+        responsibilities: ["Food Menu", "Meal Attendance", "Food Stock", "Kitchen Inventory"],
+        permissions: ["dashboard", "mess", "reports"],
+    },
+    {
+        key: adminRoles.HOUSEKEEPING,
+        label: "Housekeeping",
+        responsibilities: ["Cleaning Requests", "Room Cleaning", "Laundry Status"],
+        permissions: ["dashboard", "housekeeping", "tickets"],
+    },
+];
+
+export const getRoleDefinition = (roleKey) => roleDefinitions.find((role) => role.key === roleKey);
+
+export const normalizeAdminRoles = (admin = {}) => {
+    if (Array.isArray(admin.roles) && admin.roles.length) return admin.roles;
+    if (admin.role === adminRoles.SINGLE) return [adminRoles.HOSTEL_ADMIN];
+    if (admin.role === adminRoles.SUB) return [adminRoles.RECEPTIONIST];
+    return admin.role ? [admin.role] : [];
+};
+
+export const getRoleLabels = (admin = {}) => {
+    const labels = normalizeAdminRoles(admin)
+        .map((roleKey) => getRoleDefinition(roleKey)?.label || roleKey)
+        .filter(Boolean);
+    return labels.length ? labels.join(", ") : "-";
+};
+
+export const getPermissionsForRoles = (roles = []) => {
+    if (roles.includes(adminRoles.SUPER)) return allPrivileges;
+    return Array.from(
+        new Set(
+            roles.flatMap((roleKey) => getRoleDefinition(roleKey)?.permissions || []),
+        ),
+    );
+};
 
 const defaultSuperAdmin = {
     id: 1,
@@ -34,8 +149,9 @@ const defaultSuperAdmin = {
     email: "admin@example.com",
     mobile: "",
     role: adminRoles.SUPER,
+    roles: [adminRoles.SUPER],
     password: "admin123",
-    privileges: privilegeOptions.map((option) => option.key),
+    privileges: allPrivileges,
     active: true,
     createdAt: new Date().toLocaleDateString(),
 };
@@ -78,14 +194,16 @@ export const logoutAdmin = () => {
     localStorage.removeItem(CURRENT_ADMIN_KEY);
 };
 
-export const isSuperAdmin = (admin = getCurrentAdmin()) => admin?.role === adminRoles.SUPER;
+export const isSuperAdmin = (admin = getCurrentAdmin()) => normalizeAdminRoles(admin).includes(adminRoles.SUPER) || admin?.role === adminRoles.SUPER;
+export const hasRole = (admin, roleKey) => normalizeAdminRoles(admin).includes(roleKey);
 
 export const hasPrivilege = (admin, privilege) => {
     if (!admin) return false;
-    if (admin.role === adminRoles.SUPER) return true;
+    const roles = normalizeAdminRoles(admin);
+    if (roles.includes(adminRoles.SUPER) || admin.role === adminRoles.SUPER) return true;
     if (privilege === "payments" && admin.role === adminRoles.SINGLE) return true;
     if (privilege === "adminUsers") return false;
-    return (admin.privileges || []).includes(privilege);
+    return [...(admin.privileges || []), ...getPermissionsForRoles(roles)].includes(privilege);
 };
 
 export const getRoutePrivilege = (path = "") => {
@@ -105,7 +223,10 @@ export const getRoutePrivilege = (path = "") => {
     if (scopedPath.startsWith("/transfers")) return "transfers";
     if (scopedPath.startsWith("/reports")) return "reports";
     if (scopedPath.startsWith("/settings") || scopedPath.startsWith("/whatsapp")) return "settings";
-    if (scopedPath.startsWith("/admin/users") || scopedPath.startsWith("/admin/passwords") || scopedPath.startsWith("/staff")) return "adminUsers";
+    if (scopedPath.startsWith("/admin/history")) return "auditLogs";
+    if (scopedPath.startsWith("/admin/passwords")) return "adminProfile";
+    if (scopedPath.startsWith("/admin/users")) return "adminUsers";
+    if (scopedPath.startsWith("/staff")) return "staff";
     if (scopedPath.startsWith("/admin/profile")) return "adminProfile";
     return "dashboard";
 };
@@ -116,7 +237,9 @@ export const sanitizeAdminForSession = (admin) => ({
     username: admin.username,
     email: admin.email,
     mobile: admin.mobile,
-    role: admin.role,
-    privileges: admin.privileges || [],
+    role: normalizeAdminRoles(admin).includes(adminRoles.SUPER) ? adminRoles.SUPER : normalizeAdminRoles(admin)[0],
+    roles: normalizeAdminRoles(admin),
+    roleLabel: getRoleLabels(admin),
+    privileges: Array.from(new Set([...(admin.privileges || []), ...getPermissionsForRoles(normalizeAdminRoles(admin))])),
     active: admin.active !== false,
 });

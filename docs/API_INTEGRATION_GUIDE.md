@@ -11,7 +11,7 @@ src/pgadmin/Utils/paymentHelper.js
 src/pgadmin/Utils/adminAuth.js
 ```
 
-When Node.js API is ready, replace localStorage reads/writes in these files with API calls.
+For live server use, replace localStorage reads/writes in these files with API calls. See `docs/DATABASE_API_USAGE_GUIDE.md` for the full table and endpoint map.
 
 ## 2. API Base URL
 
@@ -38,6 +38,12 @@ const apiClient = axios.create({
 });
 
 export default apiClient;
+```
+
+The project now includes this client at:
+
+```text
+src/pgadmin/Utils/apiClient.js
 ```
 
 ## 3. Required API Routes
@@ -142,6 +148,20 @@ Settings:
 - `GET /validation-preferences`
 - `PUT /validation-preferences`
 
+Admins and history:
+
+- `GET /roles`
+- `GET /admins`
+- `POST /admins`
+- `PUT /admins/:id`
+- `DELETE /admins/:id`
+- `POST /admins/:id/reset-password`
+- `PUT /admins/:id/roles`
+- `GET /history`
+- `GET /history/:entityType/:entityId`
+- `GET /audit-logs`
+- `POST /database/backup`
+
 ## 4. Which Files To Edit For Each Module
 
 - Dashboard: `src/pgadmin/Pages/Dashboard/Dashboard.jsx`
@@ -176,4 +196,3 @@ validateSoft(values, rules)
 ```
 
 When strict validation is required, enable validation preferences from settings or backend.
-

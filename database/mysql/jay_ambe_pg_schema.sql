@@ -8,6 +8,50 @@ CREATE DATABASE IF NOT EXISTS jay_ambe_pg
 
 USE jay_ambe_pg;
 
+SET FOREIGN_KEY_CHECKS = 0;
+DROP VIEW IF EXISTS vw_financial_summary;
+DROP VIEW IF EXISTS vw_occupancy_summary;
+DROP TABLE IF EXISTS entity_history;
+DROP TABLE IF EXISTS audit_logs;
+DROP TABLE IF EXISTS housekeeping_tasks;
+DROP TABLE IF EXISTS kitchen_inventory;
+DROP TABLE IF EXISTS food_stock;
+DROP TABLE IF EXISTS meal_attendance;
+DROP TABLE IF EXISTS food_menus;
+DROP TABLE IF EXISTS gate_passes;
+DROP TABLE IF EXISTS attendance_records;
+DROP TABLE IF EXISTS visitors;
+DROP TABLE IF EXISTS inventory_items;
+DROP TABLE IF EXISTS invoice_items;
+DROP TABLE IF EXISTS invoices;
+DROP TABLE IF EXISTS chat_messages;
+DROP TABLE IF EXISTS chat_threads;
+DROP TABLE IF EXISTS support_tickets;
+DROP TABLE IF EXISTS inquiries;
+DROP TABLE IF EXISTS whatsapp_messages;
+DROP TABLE IF EXISTS whatsapp_templates;
+DROP TABLE IF EXISTS expenses;
+DROP TABLE IF EXISTS payment_line_items;
+DROP TABLE IF EXISTS payments;
+DROP TABLE IF EXISTS payment_settings;
+DROP TABLE IF EXISTS allocations;
+DROP TABLE IF EXISTS admissions;
+DROP TABLE IF EXISTS student_documents;
+DROP TABLE IF EXISTS students;
+DROP TABLE IF EXISTS room_items;
+DROP TABLE IF EXISTS rooms;
+DROP TABLE IF EXISTS floors;
+DROP TABLE IF EXISTS buildings;
+DROP TABLE IF EXISTS staff;
+DROP TABLE IF EXISTS admin_roles;
+DROP TABLE IF EXISTS admins;
+DROP TABLE IF EXISTS roles;
+DROP TABLE IF EXISTS calendar_events;
+DROP TABLE IF EXISTS validation_preferences;
+DROP TABLE IF EXISTS send_action_logs;
+DROP TABLE IF EXISTS pg_profiles;
+SET FOREIGN_KEY_CHECKS = 1;
+
 CREATE TABLE pg_profiles (
     id BIGINT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
     name VARCHAR(150) NOT NULL,
@@ -27,23 +71,35 @@ CREATE TABLE pg_profiles (
 
 CREATE TABLE roles (
     id BIGINT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
+    role_key VARCHAR(80) NOT NULL UNIQUE,
     name VARCHAR(80) NOT NULL UNIQUE,
+    description VARCHAR(255) NULL,
     permissions JSON NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE admins (
     id BIGINT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
-    role_id BIGINT UNSIGNED NULL,
     name VARCHAR(150) NOT NULL,
     username VARCHAR(100) NOT NULL UNIQUE,
     email VARCHAR(150) NULL UNIQUE,
     mobile VARCHAR(30) NULL,
     password_hash VARCHAR(255) NOT NULL,
     active BOOLEAN NOT NULL DEFAULT TRUE,
+    last_login_at TIMESTAMP NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    CONSTRAINT fk_admin_role FOREIGN KEY (role_id) REFERENCES roles(id)
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+CREATE TABLE admin_roles (
+    admin_id BIGINT UNSIGNED NOT NULL,
+    role_id BIGINT UNSIGNED NOT NULL,
+    assigned_by BIGINT UNSIGNED NULL,
+    assigned_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (admin_id, role_id),
+    CONSTRAINT fk_admin_role_admin FOREIGN KEY (admin_id) REFERENCES admins(id) ON DELETE CASCADE,
+    CONSTRAINT fk_admin_role_role FOREIGN KEY (role_id) REFERENCES roles(id) ON DELETE CASCADE,
+    CONSTRAINT fk_admin_role_assigned_by FOREIGN KEY (assigned_by) REFERENCES admins(id) ON DELETE SET NULL
 );
 
 CREATE TABLE staff (
@@ -376,6 +432,163 @@ CREATE TABLE send_action_logs (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+CREATE TABLE visitors (
+    id BIGINT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
+    student_id BIGINT UNSIGNED NULL,
+    visitor_name VARCHAR(150) NOT NULL,
+    phone VARCHAR(30) NULL,
+    purpose VARCHAR(180) NULL,
+    approved_by BIGINT UNSIGNED NULL,
+    entry_at TIMESTAMP NULL,
+    exit_at TIMESTAMP NULL,
+    status ENUM('Waiting', 'Approved', 'Inside', 'Exited', 'Rejected') NOT NULL DEFAULT 'Waiting',
+    notes TEXT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    CONSTRAINT fk_visitor_student FOREIGN KEY (student_id) REFERENCES students(id) ON DELETE SET NULL,
+    CONSTRAINT fk_visitor_admin FOREIGN KEY (approved_by) REFERENCES admins(id) ON DELETE SET NULL
+);
+
+CREATE TABLE attendance_records (
+    id BIGINT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
+    person_type ENUM('Student', 'Staff', 'Guest') NOT NULL DEFAULT 'Student',
+    person_id BIGINT UNSIGNED NULL,
+    person_name VARCHAR(150) NOT NULL,
+    attendance_date DATE NOT NULL,
+    attendance_type ENUM('Daily', 'Night', 'Meal') NOT NULL DEFAULT 'Daily',
+    status ENUM('Present', 'Absent', 'Late', 'Leave') NOT NULL DEFAULT 'Present',
+    marked_by BIGINT UNSIGNED NULL,
+    notes TEXT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE KEY uq_attendance_person_date_type (person_type, person_id, attendance_date, attendance_type),
+    CONSTRAINT fk_attendance_admin FOREIGN KEY (marked_by) REFERENCES admins(id) ON DELETE SET NULL
+);
+
+CREATE TABLE gate_passes (
+    id BIGINT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
+    student_id BIGINT UNSIGNED NULL,
+    person_name VARCHAR(150) NOT NULL,
+    reason VARCHAR(180) NULL,
+    out_at TIMESTAMP NULL,
+    expected_in_at TIMESTAMP NULL,
+    in_at TIMESTAMP NULL,
+    approved_by BIGINT UNSIGNED NULL,
+    status ENUM('Requested', 'Approved', 'Out', 'Returned', 'Rejected') NOT NULL DEFAULT 'Requested',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    CONSTRAINT fk_gate_pass_student FOREIGN KEY (student_id) REFERENCES students(id) ON DELETE SET NULL,
+    CONSTRAINT fk_gate_pass_admin FOREIGN KEY (approved_by) REFERENCES admins(id) ON DELETE SET NULL
+);
+
+CREATE TABLE food_menus (
+    id BIGINT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
+    menu_date DATE NOT NULL,
+    meal_type ENUM('Breakfast', 'Lunch', 'Dinner', 'Snack') NOT NULL,
+    items TEXT NOT NULL,
+    created_by BIGINT UNSIGNED NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    UNIQUE KEY uq_menu_date_meal (menu_date, meal_type),
+    CONSTRAINT fk_food_menu_admin FOREIGN KEY (created_by) REFERENCES admins(id) ON DELETE SET NULL
+);
+
+CREATE TABLE meal_attendance (
+    id BIGINT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
+    student_id BIGINT UNSIGNED NULL,
+    student_name VARCHAR(150) NOT NULL,
+    meal_date DATE NOT NULL,
+    meal_type ENUM('Breakfast', 'Lunch', 'Dinner', 'Snack') NOT NULL,
+    status ENUM('Taken', 'Skipped') NOT NULL DEFAULT 'Taken',
+    marked_by BIGINT UNSIGNED NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_meal_student FOREIGN KEY (student_id) REFERENCES students(id) ON DELETE SET NULL,
+    CONSTRAINT fk_meal_admin FOREIGN KEY (marked_by) REFERENCES admins(id) ON DELETE SET NULL
+);
+
+CREATE TABLE food_stock (
+    id BIGINT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
+    item_name VARCHAR(150) NOT NULL,
+    quantity DECIMAL(12,2) NOT NULL DEFAULT 0,
+    unit VARCHAR(30) NOT NULL DEFAULT 'kg',
+    reorder_level DECIMAL(12,2) NOT NULL DEFAULT 0,
+    updated_by BIGINT UNSIGNED NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    CONSTRAINT fk_food_stock_admin FOREIGN KEY (updated_by) REFERENCES admins(id) ON DELETE SET NULL
+);
+
+CREATE TABLE kitchen_inventory (
+    id BIGINT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
+    item_name VARCHAR(150) NOT NULL,
+    quantity INT NOT NULL DEFAULT 0,
+    condition_status ENUM('Good', 'Repair Needed', 'Damaged') NOT NULL DEFAULT 'Good',
+    notes TEXT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+CREATE TABLE housekeeping_tasks (
+    id BIGINT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
+    room_id BIGINT UNSIGNED NULL,
+    task_type ENUM('Cleaning Request', 'Room Cleaning', 'Laundry') NOT NULL DEFAULT 'Room Cleaning',
+    assigned_to BIGINT UNSIGNED NULL,
+    status ENUM('Open', 'Assigned', 'In Progress', 'Done', 'Cancelled') NOT NULL DEFAULT 'Open',
+    requested_by VARCHAR(150) NULL,
+    due_date DATE NULL,
+    notes TEXT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    CONSTRAINT fk_housekeeping_room FOREIGN KEY (room_id) REFERENCES rooms(id) ON DELETE SET NULL,
+    CONSTRAINT fk_housekeeping_staff FOREIGN KEY (assigned_to) REFERENCES staff(id) ON DELETE SET NULL
+);
+
+CREATE TABLE inventory_items (
+    id BIGINT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
+    item_name VARCHAR(150) NOT NULL,
+    category VARCHAR(80) NULL,
+    quantity DECIMAL(12,2) NOT NULL DEFAULT 0,
+    unit VARCHAR(30) NULL,
+    module_name VARCHAR(80) NULL,
+    status ENUM('Available', 'Low Stock', 'Out of Stock', 'Damaged') NOT NULL DEFAULT 'Available',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+CREATE TABLE audit_logs (
+    id BIGINT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
+    admin_id BIGINT UNSIGNED NULL,
+    action VARCHAR(80) NOT NULL,
+    module_name VARCHAR(100) NOT NULL,
+    entity_type VARCHAR(100) NULL,
+    entity_id VARCHAR(80) NULL,
+    entity_name VARCHAR(180) NULL,
+    ip_address VARCHAR(45) NULL,
+    user_agent VARCHAR(255) NULL,
+    old_values JSON NULL,
+    new_values JSON NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    INDEX idx_audit_module_entity (module_name, entity_type, entity_id),
+    INDEX idx_audit_created_at (created_at),
+    CONSTRAINT fk_audit_admin FOREIGN KEY (admin_id) REFERENCES admins(id) ON DELETE SET NULL
+);
+
+CREATE TABLE entity_history (
+    id BIGINT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
+    module_name VARCHAR(100) NOT NULL,
+    entity_type VARCHAR(100) NOT NULL,
+    entity_id VARCHAR(80) NOT NULL,
+    entity_name VARCHAR(180) NULL,
+    action VARCHAR(80) NOT NULL,
+    previous_data JSON NULL,
+    current_data JSON NULL,
+    changed_by BIGINT UNSIGNED NULL,
+    note TEXT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    INDEX idx_history_entity (entity_type, entity_id),
+    INDEX idx_history_module_created (module_name, created_at),
+    CONSTRAINT fk_history_admin FOREIGN KEY (changed_by) REFERENCES admins(id) ON DELETE SET NULL
+);
+
 CREATE VIEW vw_financial_summary AS
 SELECT
     COALESCE((SELECT SUM(total_amount) FROM payments WHERE status = 'Paid'), 0) AS total_income,
@@ -395,14 +608,25 @@ FROM room_items;
 INSERT INTO pg_profiles (name, short_name, address, rent_cycle, reminder_days, deposit_rule, late_fee_rule)
 VALUES ('Jay Ambe PG', 'JA', 'Paying Guest & Library', 'Monthly', 5, 'One month rent', '100 per delayed day');
 
-INSERT INTO roles (name, permissions) VALUES
-('Owner', JSON_ARRAY('dashboard', 'rooms', 'profiles', 'allocation', 'allotments', 'payments', 'adminProfile', 'adminUsers', 'reports', 'settings')),
-('Manager', JSON_ARRAY('dashboard', 'rooms', 'profiles', 'allocation', 'reports')),
-('Accountant', JSON_ARRAY('dashboard', 'payments', 'reports')),
-('Reception', JSON_ARRAY('dashboard', 'profiles', 'allocation'));
+INSERT INTO roles (role_key, name, description, permissions) VALUES
+('super-admin', 'Super Admin', 'Full system owner access', JSON_ARRAY('dashboard', 'rooms', 'profiles', 'allocation', 'allotments', 'payments', 'property', 'admissions', 'inquiries', 'tickets', 'messages', 'calendar', 'transfers', 'reports', 'billingSettings', 'hostelSettings', 'systemConfig', 'databaseBackup', 'auditLogs', 'staff', 'visitors', 'attendance', 'mess', 'housekeeping', 'settings', 'adminProfile', 'adminUsers')),
+('hostel-admin', 'Hostel Admin', 'Daily hostel operations without system configuration or role management', JSON_ARRAY('dashboard', 'rooms', 'profiles', 'allocation', 'allotments', 'payments', 'property', 'admissions', 'inquiries', 'tickets', 'messages', 'calendar', 'transfers', 'reports', 'visitors')),
+('warden', 'Warden / Receptionist', 'Check-in, check-out, attendance, visitor approval, complaint verification', JSON_ARRAY('dashboard', 'profiles', 'allocation', 'admissions', 'inquiries', 'tickets', 'calendar', 'visitors', 'attendance')),
+('receptionist', 'Receptionist', 'Admission, registration, bed allocation, availability, inquiries', JSON_ARRAY('dashboard', 'rooms', 'profiles', 'allocation', 'admissions', 'inquiries', 'calendar', 'visitors')),
+('accountant', 'Accountant', 'Rent collection, invoices, expenses, refunds, reports', JSON_ARRAY('dashboard', 'payments', 'reports', 'billingSettings')),
+('maintenance-manager', 'Maintenance Manager', 'Maintenance tickets, staff assignment, complaint tracking, inventory', JSON_ARRAY('dashboard', 'tickets', 'staff', 'reports')),
+('security-guard', 'Security Guard', 'Visitor entry, visitor exit, gate pass, night attendance', JSON_ARRAY('dashboard', 'visitors', 'attendance')),
+('mess-manager', 'Mess Manager', 'Food menu, meal attendance, food stock, kitchen inventory', JSON_ARRAY('dashboard', 'mess', 'reports')),
+('housekeeping', 'Housekeeping', 'Cleaning requests, room cleaning, laundry status', JSON_ARRAY('dashboard', 'housekeeping', 'tickets'));
 
-INSERT INTO admins (role_id, name, username, email, password_hash, active)
-VALUES (1, 'Main Administrator', 'superadmin', 'admin@example.com', '$2y$10$replace_with_real_hash', TRUE);
+INSERT INTO admins (name, username, email, password_hash, active)
+VALUES ('Main Administrator', 'superadmin', 'admin@example.com', '$2y$10$replace_with_real_hash', TRUE);
+
+INSERT INTO admin_roles (admin_id, role_id)
+SELECT admins.id, roles.id
+FROM admins
+JOIN roles ON roles.role_key = 'super-admin'
+WHERE admins.username = 'superadmin';
 
 INSERT INTO buildings (name, address, floors_count) VALUES
 ('Building A', 'Jay Ambe PG', 3),

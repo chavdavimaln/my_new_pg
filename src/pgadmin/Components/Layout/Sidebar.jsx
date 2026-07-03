@@ -11,6 +11,8 @@ import {
     LayoutDashboard,
     LogOut,
     MessageCircle,
+    History,
+    KeyRound,
     Settings,
     ShieldCheck,
     Users,
@@ -54,7 +56,17 @@ const menuItems = [
     { to: "/reports", label: "Reports", icon: FileText },
     { to: "/transfers", label: "Transfers", icon: Repeat2 },
     { to: "/messages", label: "Messages", icon: MessageCircle },
-    { to: "/staff", label: "Staff", icon: ShieldCheck },
+    {
+        label: "Admin",
+        icon: ShieldCheck,
+        children: [
+            { to: "/admin/users", label: "User List" },
+            { to: "/admin/users/add", label: "Add Admin User" },
+            { to: "/admin/passwords", label: "Reset Passwords", icon: KeyRound },
+            { to: "/staff", label: "Staff / Sub Admins" },
+            { to: "/admin/history", label: "History / Audit Logs", icon: History },
+        ],
+    },
     { to: "/settings", label: "Settings", icon: Settings },
 ];
 
@@ -168,7 +180,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                 <div className="border-t p-3">
                     <div className="mb-2 rounded-lg bg-violet-50 px-3 py-2">
                         <p className="text-sm font-black text-slate-900">{currentAdmin?.name || "Super Admin"}</p>
-                        <p className="text-xs text-slate-500">{currentAdmin?.role || "Owner"}</p>
+                        <p className="text-xs text-slate-500">{currentAdmin?.roleLabel || currentAdmin?.role || "Owner"}</p>
                     </div>
                     <button
                         type="button"

@@ -1,8 +1,12 @@
 import React from "react";
 import { Navigate, Route, Routes } from "react-router-dom";
 import AdminLogin from "./Pages/Admin/AdminLogin";
+import AdminPasswordReset from "./Pages/Admin/AdminPasswordReset";
 import AdminProfile from "./Pages/Admin/AdminProfile";
+import AdminUserDetails from "./Pages/Admin/AdminUserDetails";
+import AdminUserForm from "./Pages/Admin/AdminUserForm";
 import AdminUsers from "./Pages/Admin/AdminUsers";
+import HistoryCenter from "./Pages/Admin/HistoryCenter";
 import Dashboard from "./Pages/Dashboard/Dashboard";
 import PaymentManagement from "./Pages/Payments/PaymentManagement";
 import CupboardAllotment from "./Pages/Rooms/CupboardAllotment";
@@ -59,7 +63,11 @@ const PgAdminRoutes = () => (
         <Route path="settings" element={protectedPage(<SettingsPanel />)} />
         <Route path="admin/profile" element={protectedPage(<AdminProfile />)} />
         <Route path="admin/users" element={protectedPage(<AdminUsers />)} />
-        <Route path="admin/passwords" element={protectedPage(<AdminUsers />)} />
+        <Route path="admin/users/add" element={protectedPage(<AdminUserForm />)} />
+        <Route path="admin/users/:id" element={protectedPage(<AdminUserDetails />)} />
+        <Route path="admin/users/:id/edit" element={protectedPage(<AdminUserForm />)} />
+        <Route path="admin/passwords" element={protectedPage(<AdminPasswordReset />)} />
+        <Route path="admin/history" element={protectedPage(<HistoryCenter />)} />
         <Route path="rooms" element={protectedPage(<RoomList />)} />
         <Route path="rooms/add" element={protectedPage(<RoomAdd />)} />
         <Route path="rooms/designer/:id" element={protectedPage(<RoomDesigner />)} />

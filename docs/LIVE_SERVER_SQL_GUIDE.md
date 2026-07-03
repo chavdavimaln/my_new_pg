@@ -26,6 +26,8 @@ Schema file:
 database/mysql/jay_ambe_pg_schema.sql
 ```
 
+The file is designed for live import and repeat import. It creates the database, drops old PG objects in dependency order, recreates tables/views, and seeds the default roles and super admin.
+
 Import command:
 
 ```bash
@@ -56,6 +58,7 @@ MYSQL_PASSWORD=your_mysql_password
 ## 5. Important Tables
 
 - `pg_profiles`: PG name, settings, logo, reminder rules
+- `roles`, `admins`, `admin_roles`: multi-role admin login and permissions
 - `buildings`, `floors`, `rooms`, `room_items`: property, room, bed layout
 - `students`, `student_documents`, `admissions`: student records and approval
 - `allocations`: bed/table/cupboard assignments
@@ -67,8 +70,27 @@ MYSQL_PASSWORD=your_mysql_password
 - `calendar_events`: followups, renewals, admissions, payments
 - `chat_threads`, `chat_messages`, `whatsapp_messages`: message records
 - `send_action_logs`: download/send/export logs
+- `visitors`, `gate_passes`, `attendance_records`: security, guest, and attendance work
+- `food_menus`, `meal_attendance`, `food_stock`, `kitchen_inventory`: mess management
+- `housekeeping_tasks`, `inventory_items`: cleaning, laundry, and module inventory
+- `audit_logs`, `entity_history`: previous/current history for every important item
 
-## 6. First Login
+## 6. Database-First Rule
+
+For live use, every create/update/delete/read must go through the API and MySQL. The React localStorage helpers are only a browser fallback for demo/development mode.
+
+Use API endpoints for:
+
+- Admins, roles, reset passwords, audit logs
+- Students, guests, visitors, admissions, inquiries
+- Rooms, beds, tables, cupboards, buildings, floors
+- Payments, invoices, expenses, refunds, billing settings
+- Maintenance, housekeeping, mess, inventory, attendance
+- Reports, settings, database backup, system configuration
+
+Every API write should also insert one row into `entity_history` or `audit_logs` with old values and new values.
+
+## 7. First Login
 
 Frontend route:
 
@@ -84,7 +106,7 @@ superadmin / admin123
 
 For live backend, replace this with Node.js authentication using `admins` and `roles`.
 
-## 7. Deployment Checklist
+## 8. Deployment Checklist
 
 - Import MySQL schema.
 - Configure `.env`.
@@ -94,6 +116,7 @@ For live backend, replace this with Node.js authentication using `admins` and `r
 - Point web server reverse proxy to Node API.
 - Confirm `/pg/login` opens first.
 - Confirm `/pg` dashboard opens after login.
+- Confirm admin roles can be assigned with checkboxes.
+- Confirm `/pg/admin/history` shows audit/history data.
 - Test reports Excel/PDF download.
 - Test payment receipt, expenses, inquiries, tickets, and calendar.
-

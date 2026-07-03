@@ -1,3 +1,5 @@
+import { recordCollectionHistory } from "./historyStore";
+
 export const parseStoredArray = (key) => {
     try {
         const value = JSON.parse(localStorage.getItem(key));
@@ -14,14 +16,17 @@ export const getStoredAllocations = () => parseStoredArray("allocations");
 export const getStoredStudents = () => parseStoredArray("students");
 
 export const saveStoredRooms = (rooms) => {
+    recordCollectionHistory({ module: "Rooms", entityType: "Room", previous: getStoredRooms(), next: rooms, action: "Updated" });
     localStorage.setItem("rooms", JSON.stringify(rooms.filter(Boolean)));
 };
 
 export const saveStoredAllocations = (allocations) => {
+    recordCollectionHistory({ module: "Allocations", entityType: "Allocation", previous: getStoredAllocations(), next: allocations, action: "Updated" });
     localStorage.setItem("allocations", JSON.stringify(allocations.filter(Boolean)));
 };
 
 export const saveStoredStudents = (students) => {
+    recordCollectionHistory({ module: "Students", entityType: "Student / Person", previous: getStoredStudents(), next: students, action: "Updated" });
     localStorage.setItem("students", JSON.stringify(students.filter(Boolean)));
 };
 

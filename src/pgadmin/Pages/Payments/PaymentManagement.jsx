@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { Download, Eye, Mail, MessageCircle, Pencil, Save, Trash2, X } from "lucide-react";
 import AdminLayout from "../../Components/Layout/AdminLayout";
 import ResponsiveSortableTable from "../../Components/Common/ResponsiveSortableTable";
-import { adminRoles, getCurrentAdmin, isSuperAdmin } from "../../Utils/adminAuth";
+import { adminRoles, getCurrentAdmin, hasRole, isSuperAdmin } from "../../Utils/adminAuth";
 import { getStoredAllocations, getStoredStudents } from "../../Utils/allocationHelper";
 import {
     calculateAllocationCharges,
@@ -117,7 +117,7 @@ const buildReceiptHtml = (receipt) => `
 
 const PaymentManagement = () => {
     const currentAdmin = getCurrentAdmin();
-    const canManageModule = isSuperAdmin(currentAdmin) || currentAdmin?.role === adminRoles.SINGLE;
+    const canManageModule = isSuperAdmin(currentAdmin) || hasRole(currentAdmin, adminRoles.HOSTEL_ADMIN);
     const [settings, setSettings] = useState(getPaymentSettings());
     const [allocations, setAllocations] = useState([]);
     const [students, setStudents] = useState([]);

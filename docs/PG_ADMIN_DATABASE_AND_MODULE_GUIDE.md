@@ -1,11 +1,12 @@
 # PG Admin Database And Module Guide
 
-All new PG admin modules currently persist through browser `localStorage` helpers in `src/pgadmin/Utils`. When connecting to SQL/API, keep the same entity names so the React pages can swap helper calls for service calls cleanly.
+All PG admin modules should use MySQL through the API in live server mode. Browser `localStorage` helpers in `src/pgadmin/Utils` are fallback/demo storage only. Keep the same entity names so React pages can swap helper calls for service calls cleanly.
 
 ## Core Tables
 
-- `admin_users`: `id`, `name`, `username`, `email`, `mobile`, `role`, `password_hash`, `active`, `created_at`, `updated_at`
-- `admin_privileges`: `id`, `admin_user_id`, `privilege_key`
+- `admins`: `id`, `name`, `username`, `email`, `mobile`, `password_hash`, `active`, `last_login_at`, `created_at`, `updated_at`
+- `roles`: `id`, `role_key`, `name`, `description`, `permissions`, `created_at`
+- `admin_roles`: `admin_id`, `role_id`, `assigned_by`, `assigned_at`
 - `buildings`: `id`, `name`, `address`, `created_at`, `updated_at`
 - `floors`: `id`, `building_id`, `name`, `level`, `created_at`, `updated_at`
 - `rooms`: `id`, `building_id`, `floor_id`, `room_number`, `room_type`, `status`, `width_feet`, `height_feet`, `canvas_width`, `canvas_height`, `layout_json`, `created_at`, `updated_at`
@@ -19,6 +20,10 @@ All new PG admin modules currently persist through browser `localStorage` helper
 - `chat_messages`: `id`, `thread_id`, `sender`, `text`, `status`, `attachment_url`, `attachment_name`, `created_at`, `updated_at`
 - `calendar_events`: `id`, `title`, `type`, `date`, `assigned_to`, `notes`, `status`, `google_event_id`, `created_at`, `updated_at`
 - `transfer_history`: `id`, `student_id`, `student_name`, `action`, `from_room`, `to_room`, `reason`, `date`, `created_at`
+- `visitors`, `gate_passes`, `attendance_records`: security, visitor approval, entry/exit, night attendance
+- `food_menus`, `meal_attendance`, `food_stock`, `kitchen_inventory`: mess manager workflows
+- `housekeeping_tasks`: cleaning requests, room cleaning, laundry status
+- `audit_logs`, `entity_history`: old/new snapshots and admin action logs for every module
 
 ## API Mapping
 
@@ -27,6 +32,7 @@ All new PG admin modules currently persist through browser `localStorage` helper
 - Replace payment helpers with `/api/payments` and `/api/payment-settings`.
 - Replace requirement store helpers with module endpoints: `/api/expenses`, `/api/tickets`, `/api/inquiries`, `/api/messages`, `/api/calendar-events`, `/api/transfers`.
 - Store message attachments on the backend or object storage and save only metadata plus URL in `chat_messages`.
+- For every API write, insert previous/current JSON into `entity_history` and admin action metadata into `audit_logs`.
 
 ## Google Calendar
 

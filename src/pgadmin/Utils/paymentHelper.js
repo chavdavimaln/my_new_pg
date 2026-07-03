@@ -1,3 +1,5 @@
+import { recordCollectionHistory, recordHistory } from "./historyStore";
+
 const PAYMENT_SETTINGS_KEY = "paymentSettings";
 const PAYMENTS_KEY = "payments";
 
@@ -71,16 +73,27 @@ export const getPaymentSettings = () => {
 };
 
 export const savePaymentSettings = (settings) => {
+    const previousSettings = getPaymentSettings();
+    const nextSettings = {
+        ...previousSettings,
+        ...settings,
+        feeStructure: {
+            ...previousSettings.feeStructure,
+            ...(settings.feeStructure || {}),
+        },
+    };
+    recordHistory({
+        module: "Payments",
+        entityType: "Payment Settings",
+        entityId: "payment-settings",
+        entityName: "Payment Settings",
+        action: "Updated",
+        before: previousSettings,
+        after: nextSettings,
+    });
     localStorage.setItem(
         PAYMENT_SETTINGS_KEY,
-        JSON.stringify({
-            ...getPaymentSettings(),
-            ...settings,
-            feeStructure: {
-                ...getPaymentSettings().feeStructure,
-                ...(settings.feeStructure || {}),
-            },
-        }),
+        JSON.stringify(nextSettings),
     );
 };
 
@@ -89,6 +102,7 @@ export const isPaymentModuleEnabled = () => getPaymentSettings().enabled !== fal
 export const getStoredPayments = () => parseStoredArray(PAYMENTS_KEY);
 
 export const saveStoredPayments = (payments) => {
+    recordCollectionHistory({ module: "Payments", entityType: "Payment", previous: getStoredPayments(), next: payments, action: "Updated" });
     localStorage.setItem(PAYMENTS_KEY, JSON.stringify(payments.filter(Boolean)));
 };
 
