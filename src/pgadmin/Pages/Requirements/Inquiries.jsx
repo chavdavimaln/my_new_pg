@@ -2,6 +2,7 @@ import React, { useMemo, useState } from "react";
 import { Copy, Eye, Plus } from "lucide-react";
 import AdminLayout from "../../Components/Layout/AdminLayout";
 import { getInquiries, saveInquiries, todayISO } from "../../Utils/pgRequirementStore";
+import { showSuccessPopup } from "../../../utils/popup";
 
 const statuses = ["All", "New", "Contacted", "Visited", "Negotiating", "Converting", "Converted", "Lost"];
 
@@ -42,7 +43,7 @@ const Inquiries = () => {
 
     const copyPublicUrl = async () => {
         await navigator.clipboard.writeText(publicUrl);
-        alert("Public enquiry URL copied");
+        await showSuccessPopup("URL Copied", "Public enquiry URL copied to clipboard.");
     };
 
     return (

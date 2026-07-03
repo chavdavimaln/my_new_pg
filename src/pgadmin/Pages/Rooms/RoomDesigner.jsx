@@ -6,6 +6,7 @@ import { Pencil, Save, UserPlus } from "lucide-react";
 import AdminLayout from "../../Components/Layout/AdminLayout";
 import { pgPath } from "../../Utils/pgBrand";
 import ResponsiveSortableTable from "../../Components/Common/ResponsiveSortableTable";
+import { showConfirmPopup, showErrorPopup, showSuccessPopup } from "../../../utils/popup";
 import RoomCanvas from "../../Components/Rooms/RoomCanvas";
 import RoomToolbar from "../../Components/Rooms/RoomToolbar";
 import { GRID_SIZE } from "../../Utils/gridConfig";
@@ -146,7 +147,7 @@ const RoomDesigner = () => {
 
     const addTable = () => {
         if (tables.length >= 6) {
-            alert("Maximum 6 tables allowed");
+            showErrorPopup("Table Limit Reached", "Maximum 6 tables are allowed in one room.");
             return;
         }
         const pos = getNextPosition(getLayoutItems(), DEFAULT_SIZES.table.width, DEFAULT_SIZES.table.height);
@@ -163,7 +164,7 @@ const RoomDesigner = () => {
 
     const addCupboard = () => {
         if (cupboards.length >= 6) {
-            alert("Maximum 6 cupboards allowed");
+            showErrorPopup("Cupboard Limit Reached", "Maximum 6 cupboards are allowed in one room.");
             return;
         }
         const pos = getNextPosition(getLayoutItems(), DEFAULT_SIZES.cupboard.width, DEFAULT_SIZES.cupboard.height);
@@ -252,22 +253,27 @@ const RoomDesigner = () => {
         });
     };
 
-    const deleteSelectedItem = () => {
+    const deleteSelectedItem = async () => {
         if (!selectedItem || selectedItem.type === "door") return;
 
         const config = getDeleteConfig(selectedItem.type);
         if (!config) return;
 
         if (config.items.length <= config.minCount) {
-            alert(config.minMessage || `At least one ${config.singular} required`);
+            await showErrorPopup(
+                "Cannot Delete Item",
+                config.minMessage || `At least one ${config.singular} is required.`,
+            );
             return;
         }
 
         const occupied = isOccupied(selectedItem.type, selectedItem.id, id);
         if (occupied) {
-            const confirmed = window.confirm(
-                `${selectedItem.label || config.singular} is allotted to someone. Delete it anyway? The ${config.singular} allotment will be removed.`,
-            );
+            const confirmed = await showConfirmPopup({
+                title: "Delete Allotted Item?",
+                text: `${selectedItem.label || config.singular} is allotted to someone. If you delete it, the ${config.singular} allotment will be removed.`,
+                confirmButtonText: "Delete Item",
+            });
             if (!confirmed) {
                 return;
             }
@@ -307,28 +313,6 @@ const RoomDesigner = () => {
         setSelectedItem(null);
     };
 
-    // const rotateSelectedItem = () => {
-    //     if (!selectedItem) {
-    //         alert("Select item");
-    //         return;
-    //     }
-    //     const updateRotation = (items, setter) => {
-    //         setter(
-    //             items.map((item) =>
-    //                 item.id === selectedItem.id
-    //                     ? {
-    //                           ...item,
-    //                           rotation: ((item.rotation || 0) + 90) % 360,
-    //                       }
-    //                     : item,
-    //             ),
-    //         );
-    //     };
-    //     if (selectedItem.type === "bed") updateRotation(beds, setBeds);
-    //     if (selectedItem.type === "table") updateRotation(tables, setTables);
-    //     if (selectedItem.type === "cupboard") updateRotation(cupboards, setCupboards);
-    //     if (selectedItem.type === "door") updateRotation(doors, setDoors);
-    // };
     const rotateSelectedItem = () => {
         if (!selectedItem) return;
 
@@ -397,7 +381,7 @@ const RoomDesigner = () => {
             isOutOfBounds(nextX, nextY, size.width, size.height) ||
             isOverlapping(nextX, nextY, size.width, size.height, id)
         ) {
-            alert("Cannot overlap another item");
+            showErrorPopup("Invalid Position", "This item cannot overlap another item.");
             return;
         }
 
@@ -417,7 +401,7 @@ const RoomDesigner = () => {
             isOutOfBounds(nextX, nextY, size.width, size.height) ||
             isOverlapping(nextX, nextY, size.width, size.height, id)
         ) {
-            alert("Cannot overlap another item");
+            showErrorPopup("Invalid Position", "This item cannot overlap another item.");
             return;
         }
         setTables(tables.map((item) => (item.id === id ? { ...item, ...size, x: nextX, y: nextY } : item)));
@@ -436,7 +420,7 @@ const RoomDesigner = () => {
             isOutOfBounds(nextX, nextY, size.width, size.height) ||
             isOverlapping(nextX, nextY, size.width, size.height, id)
         ) {
-            alert("Cannot overlap another item");
+            showErrorPopup("Invalid Position", "This item cannot overlap another item.");
             return;
         }
 
@@ -456,16 +440,16 @@ const RoomDesigner = () => {
             isOutOfBounds(nextX, nextY, size.width, size.height) ||
             isOverlapping(nextX, nextY, size.width, size.height, id)
         ) {
-            alert("Cannot overlap another item");
+            showErrorPopup("Invalid Position", "This item cannot overlap another item.");
             return;
         }
 
         setDoors(doors.map((item) => (item.id === id ? { ...item, ...size, x: nextX, y: nextY } : item)));
         setSelectedItem({ ...door, ...size, x: nextX, y: nextY, type: "door" });
     };
-    const saveLayout = () => {
+    const saveLayout = async () => {
         if (!roomName.trim()) {
-            alert("Please enter room name");
+            await showErrorPopup("Room Name Required", "Please enter room name before saving the layout.");
             return;
         }
 
@@ -496,7 +480,7 @@ const RoomDesigner = () => {
 
         saveStoredRooms(updatedRooms);
 
-        alert("Layout Updated Successfully");
+        await showSuccessPopup("Layout Updated", "The room layout was updated successfully.");
     };
 
     // const ITEM_GAP = 20;

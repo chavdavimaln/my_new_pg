@@ -37,7 +37,7 @@ mysql -u root -p < database/mysql/jay_ambe_pg_schema.sql
 Database created:
 
 ```text
-jay_ambe_pg
+jay_ambe_pg 
 ```
 
 ## 4. Environment Variables

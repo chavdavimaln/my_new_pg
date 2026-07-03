@@ -6,10 +6,11 @@ import ResponsiveSortableTable from "../../Components/Common/ResponsiveSortableT
 import { getAdminUsers, getCurrentAdmin, getRoleLabels, isSuperAdmin, saveAdminUsers } from "../../Utils/adminAuth";
 import { pgPath } from "../../Utils/pgBrand";
 import { recordHistory } from "../../Utils/historyStore";
+import { showConfirmPopup, showErrorPopup, showSuccessPopup } from "../../../utils/popup";
 
 const openEmail = (admin) => {
     if (!admin.email) {
-        alert("Email address is not available for this user");
+        showErrorPopup("Email Not Available", "Email address is not available for this user.");
         return;
     }
     window.location.href = `mailto:${admin.email}?subject=${encodeURIComponent("Jay Ambe PG Admin Account")}&body=${encodeURIComponent(`Hello ${admin.name},\n\nThis message is from Jay Ambe PG admin panel.`)}`;
@@ -17,7 +18,7 @@ const openEmail = (admin) => {
 
 const openWhatsApp = (admin) => {
     if (!admin.mobile) {
-        alert("Mobile number is not available for this user");
+        showErrorPopup("Mobile Not Available", "Mobile number is not available for this user.");
         return;
     }
     const phone = String(admin.mobile).replace(/\D/g, "");
@@ -33,18 +34,23 @@ const AdminUsers = () => {
         setAdmins(getAdminUsers());
     }, []);
 
-    const deleteAdmin = (admin) => {
+    const deleteAdmin = async (admin) => {
         if (!isSuperAdmin(currentAdmin)) {
-            alert("Only Super Admin can delete admin users");
+            await showErrorPopup("Permission Denied", "Only Super Admin can delete admin users.");
             return;
         }
 
         if (String(admin.id) === String(currentAdmin?.id)) {
-            alert("You cannot delete your own admin account");
+            await showErrorPopup("Action Not Allowed", "You cannot delete your own admin account.");
             return;
         }
 
-        if (!window.confirm(`Delete admin user "${admin.name}"?`)) return;
+        const confirmed = await showConfirmPopup({
+            title: "Delete Admin User?",
+            text: `Delete admin user "${admin.name}"? This action cannot be undone.`,
+            confirmButtonText: "Delete User",
+        });
+        if (!confirmed) return;
 
         const updatedAdmins = admins.filter((item) => String(item.id) !== String(admin.id));
         saveAdminUsers(updatedAdmins);
@@ -58,6 +64,7 @@ const AdminUsers = () => {
             note: "Admin user removed from active login list",
         });
         setAdmins(updatedAdmins);
+        await showSuccessPopup("Admin Deleted", `Admin user "${admin.name}" was deleted successfully.`);
     };
 
     const columns = [

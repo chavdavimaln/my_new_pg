@@ -3,6 +3,7 @@ import { FileText, Mail, MessageCircle, Plus } from "lucide-react";
 import AdminLayout from "../../Components/Layout/AdminLayout";
 import { formatCurrency, getStoredPayments, saveStoredPayments } from "../../Utils/paymentHelper";
 import { logSendAction, todayISO } from "../../Utils/pgRequirementStore";
+import { showInfoPopup, showSuccessPopup } from "../../../utils/popup";
 
 const tabs = ["All", "Rent", "Partial", "Deposit", "Late Fee", "Extra"];
 const methods = ["UPI", "Cash", "QR", "Razorpay", "Gateway", "Bank Transfer"];
@@ -32,11 +33,14 @@ const PaymentOperations = () => {
     const notifyPayment = (payment, channel) => {
         const target = channel === "email" ? payment.email || payment.studentName || "student" : payment.phone || payment.studentName || "student";
         logSendAction({ type: channel, module: "income", target, studentName: payment.studentName || "Student" });
-        alert(`${channel === "email" ? "Email" : "WhatsApp"} reminder queued for ${payment.studentName || "student"}.`);
+        showSuccessPopup(
+            "Reminder Queued",
+            `${channel === "email" ? "Email" : "WhatsApp"} reminder queued for ${payment.studentName || "student"}.`,
+        );
     };
 
     const showPaymentReport = (payment) => {
-        alert([
+        showInfoPopup("Payment Report", [
             `Receipt: ${payment.receiptNo || payment.receiptId || "-"}`,
             `Student: ${payment.studentName || "-"}`,
             `Type: ${payment.type || payment.paymentType || "Rent"}`,

@@ -3,6 +3,7 @@ import { CheckCircle, MessageCircle, Plus, XCircle } from "lucide-react";
 import AdminLayout from "../../Components/Layout/AdminLayout";
 import { PageHeader, ThemePanel } from "../../Components/Layout/ThemeElements";
 import { approveAdmission, getAdmissions, saveAdmissions, todayISO } from "../../Utils/pgRequirementStore";
+import { showErrorPopup, showSuccessPopup } from "../../../utils/popup";
 
 const emptyForm = {
     name: "",
@@ -36,10 +37,13 @@ const AdmissionManagement = () => {
         saveAdmissions(items);
     };
 
-    const submitAdmission = (event) => {
+    const submitAdmission = async (event) => {
         event.preventDefault();
         if (!form.acceptedTerms) {
-            alert("Student must accept Terms & Conditions before submitting.");
+            await showErrorPopup(
+                "Terms Required",
+                "Student must accept Terms & Conditions before submitting.",
+            );
             return;
         }
 
@@ -54,6 +58,7 @@ const AdmissionManagement = () => {
             },
         ]);
         setForm(emptyForm);
+        await showSuccessPopup("Admission Saved", "Admission request saved successfully.");
     };
 
     const updateStatus = (id, status) => {

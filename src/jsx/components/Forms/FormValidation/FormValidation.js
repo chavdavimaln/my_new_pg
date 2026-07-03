@@ -5,6 +5,7 @@ import { Formik } from "formik";
 import * as Yup from "yup";
 
 import PageTitle from "../../../layouts/PageTitle";
+import { showInfoPopup } from "../../../../utils/popup";
 
 const loginSchema = Yup.object().shape({
   username: Yup.string()
@@ -313,7 +314,7 @@ const FormValidation = () => {
                   validationSchema={loginSchema}
                   onSubmit={(values, { setSubmitting }) => {
                     setTimeout(() => {
-                      alert(JSON.stringify(values, null, 2));
+                      showInfoPopup("Submitted Values", JSON.stringify(values, null, 2));
                       setSubmitting(false);
                     }, 400);
                   }}

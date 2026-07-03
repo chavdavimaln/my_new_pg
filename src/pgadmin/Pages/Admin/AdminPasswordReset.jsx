@@ -13,6 +13,7 @@ import {
     setCurrentAdmin,
 } from "../../Utils/adminAuth";
 import { recordHistory } from "../../Utils/historyStore";
+import { showErrorPopup, showSuccessPopup } from "../../../utils/popup";
 
 const AdminPasswordReset = () => {
     const location = useLocation();
@@ -37,24 +38,24 @@ const AdminPasswordReset = () => {
     );
     const selectedAdmin = visibleAdmins.find((admin) => String(admin.id) === String(selectedId));
 
-    const resetPassword = () => {
+    const resetPassword = async () => {
         if (!selectedAdmin) {
-            alert("Please select a user");
+            await showErrorPopup("User Required", "Please select a user before resetting the password.");
             return;
         }
 
         if (!canResetAll && String(selectedAdmin.id) !== String(currentAdmin?.id)) {
-            alert("You can reset only your own password");
+            await showErrorPopup("Permission Denied", "You can reset only your own password.");
             return;
         }
 
         if (!password.trim() || password.length < 6) {
-            alert("Password must be at least 6 characters");
+            await showErrorPopup("Password Too Short", "Password must be at least 6 characters.");
             return;
         }
 
         if (password !== confirmPassword) {
-            alert("Password confirmation does not match");
+            await showErrorPopup("Password Mismatch", "Password confirmation does not match.");
             return;
         }
 
@@ -80,7 +81,7 @@ const AdminPasswordReset = () => {
 
         setPassword("");
         setConfirmPassword("");
-        alert("Password reset successfully");
+        await showSuccessPopup("Password Reset", "Password reset successfully.");
     };
 
     const columns = [

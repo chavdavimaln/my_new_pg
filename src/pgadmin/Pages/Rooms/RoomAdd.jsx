@@ -1,6 +1,7 @@
 // pgadmin/src/Pages/Rooms/RoomAdd.jsx
 import React, { useMemo, useState } from "react";
 import { Archive, BedDouble, DoorOpen, Plus, RotateCw, Table2, Trash2 } from "lucide-react";
+import Swal from "sweetalert2";
 import AdminLayout from "../../Components/Layout/AdminLayout";
 import RoomCanvas from "../../Components/Rooms/RoomCanvas";
 import {
@@ -37,6 +38,15 @@ const generateRoomName = () => {
 const createRoomId = () => `room-${Date.now()}`;
 
 const getCanvasPixels = (feet) => Math.max(1, Number(feet) || 1) * FEET_TO_PX;
+
+const showRoomPopup = (icon, title, text) =>
+    Swal.fire({
+        icon,
+        title,
+        text,
+        confirmButtonText: "OK",
+        confirmButtonColor: icon === "error" ? "#dc2626" : "#16a34a",
+    });
 
 const getDefaultDoor = (canvasWidth, canvasHeight) => ({
     id: "door-1",
@@ -126,7 +136,7 @@ const RoomAdd = () => {
             }
         }
 
-        alert("No free space available in this room size");
+        showRoomPopup("error", "No Free Space", "No free space available in this room size.");
         return null;
     };
 
@@ -171,19 +181,6 @@ const RoomAdd = () => {
         ]);
     };
 
-    const createDefaultBed = () => {
-        const position = getNextPosition(DEFAULT_SIZES.bed.width, DEFAULT_SIZES.bed.height);
-        if (!position) return null;
-
-        return {
-            id: `${roomId}-bed-1`,
-            label: "Bed-1",
-            ...DEFAULT_SIZES.bed,
-            ...position,
-            rotation: 0,
-        };
-    };
-
     const addDoor = () => {
         if (doors.length > 0) {
             setSelectedItem({ ...doors[0], type: "door" });
@@ -213,21 +210,40 @@ const RoomAdd = () => {
         setRoomData({ ...roomData, floorId: floor?.id || "", floorName: floor?.name || "" });
     };
 
-    const saveRoom = () => {
+    const saveRoom = async () => {
         if (!roomData.roomNumber.trim()) {
-            alert("Please enter room name");
+            await showRoomPopup("error", "Room Name Required", "Please enter room name.");
             return;
         }
 
-        const finalBeds = beds.length === 0 && tables.length === 0 && cupboards.length === 0 ? [createDefaultBed()] : beds;
-        if (finalBeds.some((item) => !item)) return;
+        if (beds.length < 1) {
+            await showRoomPopup("error", "Bed Required", "Please add at least one bed before saving the room.");
+            return;
+        }
+
+        const confirmation = await Swal.fire({
+            icon: "question",
+            title: "Save Room?",
+            text: "Do you want to save this room layout now?",
+            showDenyButton: true,
+            showCancelButton: true,
+            confirmButtonText: "Yes, Save",
+            denyButtonText: "No",
+            cancelButtonText: "Cancel",
+            confirmButtonColor: "#16a34a",
+            denyButtonColor: "#4b5563",
+            cancelButtonColor: "#6b7280",
+            reverseButtons: true,
+        });
+
+        if (!confirmation.isConfirmed) return;
 
         const rooms = getStoredRooms();
         const room = {
             id: roomId,
             roomNumber: roomData.roomNumber.trim(),
-            roomType: getRoomType(finalBeds.length),
-            bedCount: finalBeds.length,
+            roomType: getRoomType(beds.length),
+            bedCount: beds.length,
             canvasWidth,
             canvasHeight,
             widthFeet: roomData.widthFeet,
@@ -237,14 +253,14 @@ const RoomAdd = () => {
             buildingName: roomData.buildingName,
             floorId: roomData.floorId,
             floorName: roomData.floorName,
-            beds: finalBeds,
+            beds,
             tables,
             cupboards,
             doors,
         };
 
         saveStoredRooms([...rooms, room]);
-        alert("Room Saved Successfully");
+        await showRoomPopup("success", "Room Saved", "Room saved successfully.");
 
         const nextCanvasWidth = getCanvasPixels(DEFAULT_ROOM_FEET.width);
         const nextCanvasHeight = getCanvasPixels(DEFAULT_ROOM_FEET.height);
@@ -285,7 +301,7 @@ const RoomAdd = () => {
             isOutOfBounds(nextX, nextY, size.width, size.height) ||
             isOverlapping(nextX, nextY, size.width, size.height, id)
         ) {
-            alert("Items cannot overlap");
+            showRoomPopup("error", "Invalid Position", "Items cannot overlap.");
             return;
         }
 

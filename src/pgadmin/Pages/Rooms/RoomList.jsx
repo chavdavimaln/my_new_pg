@@ -4,6 +4,7 @@ import { Search } from "lucide-react";
 import RoomCard from "../../Components/Rooms/RoomCard";
 import AdminLayout from "../../Components/Layout/AdminLayout";
 import { PageHeader } from "../../Components/Layout/ThemeElements";
+import { showConfirmPopup, showSuccessPopup } from "../../../utils/popup";
 import {
     getStoredAllocations,
     getStoredRooms,
@@ -71,7 +72,7 @@ const RoomList = () => {
         });
     }, [allocations, rooms, search, sortBy]);
 
-    const deleteRoom = (room) => {
+    const deleteRoom = async (room) => {
         const roomAllocations = allocations.filter((allocation) => String(allocation.roomId) === String(room.id));
         const studentList = roomAllocations.map((allocation) => allocation.studentName).filter(Boolean).join(", ");
 
@@ -82,7 +83,12 @@ const RoomList = () => {
               }.`
             : `Delete Room ${room.roomNumber}?`;
 
-        if (!window.confirm(`${message}\n\nThis action cannot be undone.`)) return;
+        const confirmed = await showConfirmPopup({
+            title: "Delete Room?",
+            text: `${message} This action cannot be undone.`,
+            confirmButtonText: "Delete Room",
+        });
+        if (!confirmed) return;
 
         const updatedRooms = rooms.filter((item) => String(item.id) !== String(room.id));
         const updatedAllocations = allocations.filter((allocation) => String(allocation.roomId) !== String(room.id));
@@ -92,6 +98,7 @@ const RoomList = () => {
         saveStoredAllocations(updatedAllocations);
         setRooms(updatedRooms);
         setAllocations(updatedAllocations);
+        await showSuccessPopup("Room Deleted", `Room ${room.roomNumber} was deleted successfully.`);
     };
 
     return (

@@ -7,6 +7,7 @@ import { CalendarDays, ExternalLink, Pencil, Plus, Trash2 } from "lucide-react";
 import AdminLayout from "../../Components/Layout/AdminLayout";
 import { getAdmissions, getCalendarEvents, getInquiries, saveCalendarEvents, todayISO } from "../../Utils/pgRequirementStore";
 import { getStoredPayments } from "../../Utils/paymentHelper";
+import { showInfoPopup } from "../../../utils/popup";
 
 const eventTypes = ["Follow-up", "Renewal", "Admission", "Payment", "Room Cleaning", "Maintenance"];
 const eventColors = {
@@ -77,7 +78,7 @@ const CalendarOperations = () => {
 
     const editEvent = (item) => {
         if (String(item.id).startsWith("lead-") || String(item.id).startsWith("adm-") || String(item.id).startsWith("pay-")) {
-            alert("Generated events are edited from their source module.");
+            showInfoPopup("Generated Event", "Generated events are edited from their source module.");
             return;
         }
         setEditingId(item.id);

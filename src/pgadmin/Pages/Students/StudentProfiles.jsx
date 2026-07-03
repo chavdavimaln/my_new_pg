@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Check, Pencil, Trash2, X } from "lucide-react";
 import AdminLayout from "../../Components/Layout/AdminLayout";
 import ResponsiveSortableTable from "../../Components/Common/ResponsiveSortableTable";
+import { showErrorPopup } from "../../../utils/popup";
 import {
     getStoredAllocations,
     getStoredStudents,
@@ -58,7 +59,7 @@ const StudentProfiles = () => {
         }
 
         if (!file.type.startsWith("image/")) {
-            alert("Please select a valid photo image");
+            showErrorPopup("Invalid Photo", "Please select a valid image file for the profile photo.");
             event.target.value = "";
             return;
         }
@@ -70,32 +71,32 @@ const StudentProfiles = () => {
 
     const saveStudent = () => {
         if (!formData.name.trim()) {
-            alert("Please enter student or person name");
+            showErrorPopup("Name Required", "Please enter the student or person name.");
             return;
         }
 
         if (!formData.phone.trim()) {
-            alert("Please enter mobile number");
+            showErrorPopup("Mobile Required", "Please enter a mobile number.");
             return;
         }
 
         if (!formData.email.trim()) {
-            alert("Please enter email");
+            showErrorPopup("Email Required", "Please enter an email address.");
             return;
         }
 
         if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email.trim())) {
-            alert("Please enter a valid email");
+            showErrorPopup("Invalid Email", "Please enter a valid email address.");
             return;
         }
 
         if (!formData.idProofType) {
-            alert("Please select ID proof");
+            showErrorPopup("ID Proof Required", "Please select an ID proof type.");
             return;
         }
 
         if (!formData.idProofNumber.trim()) {
-            alert("Please enter ID proof number");
+            showErrorPopup("ID Proof Number Required", "Please enter the selected ID proof number.");
             return;
         }
 
@@ -153,7 +154,10 @@ const StudentProfiles = () => {
     const deleteStudent = (id) => {
         const hasAllocation = allocations.some((allocation) => String(allocation.studentId) === String(id));
         if (hasAllocation) {
-            alert("This profile is used in an allocation. Delete or change the allocation first.");
+            showErrorPopup(
+                "Profile In Use",
+                "This profile is used in an allocation. Delete or change the allocation first.",
+            );
             return;
         }
 

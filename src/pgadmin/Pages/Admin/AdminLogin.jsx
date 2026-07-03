@@ -7,18 +7,19 @@ import {
     setCurrentAdmin,
 } from "../../Utils/adminAuth";
 import { PG_BRAND, pgPath } from "../../Utils/pgBrand";
+import { showErrorPopup } from "../../../utils/popup";
 
 const AdminLogin = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const [formData, setFormData] = useState({ username: "", password: "" });
 
-    const login = () => {
+    const login = async () => {
         const username = formData.username.trim();
         const password = formData.password;
 
         if (!username || !password) {
-            alert("Please enter username and password");
+            await showErrorPopup("Login Details Required", "Please enter username and password.");
             return;
         }
 
@@ -30,7 +31,7 @@ const AdminLogin = () => {
         );
 
         if (!admin) {
-            alert("Invalid admin login details");
+            await showErrorPopup("Invalid Login", "Invalid admin login details. Please check your username and password.");
             return;
         }
 

@@ -1,4 +1,5 @@
 import React, { createContext, useEffect, useState } from "react";
+import { showErrorPopup } from "../utils/popup";
 
 export const ThemeContext = createContext();
 
@@ -124,7 +125,7 @@ const ThemeContextProvider = (props) => {
   const changeSideBarStyle = (name) => {
     if (sidebarLayout.value === "horizontal") {
       if (name.value === "overlay") {
-        alert("Sorry! Overlay is not possible in Horizontal layout.");
+        showErrorPopup("Layout Not Available", "Overlay sidebar is not possible in Horizontal layout.");
       } else {
         setSideBarStyle(name);
         setIconHover(name.value === "icon-hover" ? "_i-hover" : "");

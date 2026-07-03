@@ -14,6 +14,7 @@ import {
 } from "../../Utils/adminAuth";
 import { pgPath } from "../../Utils/pgBrand";
 import { recordHistory } from "../../Utils/historyStore";
+import { showErrorPopup, showSuccessPopup } from "../../../utils/popup";
 
 const emptyAdmin = {
     name: "",
@@ -86,14 +87,14 @@ const AdminUserForm = () => {
         });
     };
 
-    const saveAdmin = () => {
+    const saveAdmin = async () => {
         if (!isSuperAdmin(currentAdmin)) {
-            alert("Only Super Admin can manage admin users");
+            await showErrorPopup("Permission Denied", "Only Super Admin can manage admin users.");
             return;
         }
 
         if (!formData.name.trim() || !formData.username.trim() || !formData.password.trim()) {
-            alert("Please enter name, username, and password");
+            await showErrorPopup("Missing Details", "Please enter name, username, and password.");
             return;
         }
 
@@ -103,7 +104,7 @@ const AdminUserForm = () => {
                 admin.username.toLowerCase() === formData.username.trim().toLowerCase(),
         );
         if (usernameExists) {
-            alert("Username already exists");
+            await showErrorPopup("Username Exists", "This username already exists. Please choose another username.");
             return;
         }
 
@@ -114,7 +115,7 @@ const AdminUserForm = () => {
                 String(admin.id) !== String(editingId),
         ).length;
         if (normalizedRoles.includes(adminRoles.SUPER) && superAdminCount >= 3) {
-            alert("Maximum 3 super-admin persons are allowed");
+            await showErrorPopup("Super Admin Limit", "Maximum 3 super-admin persons are allowed.");
             return;
         }
 
@@ -147,6 +148,10 @@ const AdminUserForm = () => {
             before: previousAdmin,
             after: admin,
         });
+        await showSuccessPopup(
+            editingId ? "Admin Updated" : "Admin Added",
+            editingId ? "Admin user updated successfully." : "Admin user added successfully.",
+        );
         navigate(pgPath("/admin/users"));
     };
 

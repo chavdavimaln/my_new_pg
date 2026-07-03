@@ -4,6 +4,7 @@ import { Check, Pencil, Plus, Trash2, X } from "lucide-react";
 import AdminLayout from "../../Components/Layout/AdminLayout";
 import { pgPath } from "../../Utils/pgBrand";
 import ResponsiveSortableTable from "../../Components/Common/ResponsiveSortableTable";
+import { showConfirmPopup, showErrorPopup, showInfoPopup, showSuccessPopup } from "../../../utils/popup";
 import {
     getStoredAllocations,
     getStoredRooms,
@@ -173,26 +174,26 @@ const StudentAllocation = () => {
         setRooms(updatedRooms);
     };
 
-    const saveAllocation = (allowBedOnly = false) => {
+    const saveAllocation = async (allowBedOnly = false) => {
         if (!formData.studentId) {
-            alert("Please select a saved student/person profile first");
+            await showErrorPopup("Profile Required", "Please select a saved student or person profile first.");
             return;
         }
 
         if (!formData.roomId || !formData.bedId) {
-            alert("Please select room and bed");
+            await showErrorPopup("Room And Bed Required", "Please select a room and bed before saving.");
             return;
         }
 
         const student = students.find((item) => String(item.id) === String(formData.studentId));
         if (!student) {
-            alert("Selected profile was not found");
+            await showErrorPopup("Profile Not Found", "The selected profile was not found. Please select another profile.");
             return;
         }
 
         const room = rooms.find((item) => String(item.id) === String(formData.roomId));
         if (!room) {
-            alert("Selected room was not found");
+            await showErrorPopup("Room Not Found", "The selected room was not found. Please select another room.");
             return;
         }
 
@@ -205,17 +206,24 @@ const StudentAllocation = () => {
         ).length;
 
         if (totalBeds > 0 && usedBedsInRoom >= totalBeds) {
-            alert("This room has no vacant bed available for another person");
+            await showErrorPopup("No Vacant Bed", "This room has no vacant bed available for another person.");
             return;
         }
 
         if (isRoomUnderMaintenance(room) && !isKeepingSameMaintenanceAllocation()) {
-            const allowStatusChange = window.confirm(
-                "This room is under maintenance. Existing allotted members can remain, but a new or changed allotment is not allowed while the room is under maintenance.\n\nDo you want to change this room status to Available and continue?",
-            );
+            const allowStatusChange = await showConfirmPopup({
+                icon: "warning",
+                title: "Room Under Maintenance",
+                text: "Existing allotted members can remain, but a new or changed allotment is not allowed while the room is under maintenance. Change this room status to Available and continue?",
+                confirmButtonText: "Make Available",
+                cancelButtonText: "Keep Maintenance",
+            });
 
             if (!allowStatusChange) {
-                alert("Allotment cancelled. Keep the existing member or change the room status to Available first.");
+                await showInfoPopup(
+                    "Allotment Cancelled",
+                    "Keep the existing member or change the room status to Available first.",
+                );
                 return;
             }
 
@@ -223,17 +231,17 @@ const StudentAllocation = () => {
         }
 
         if (isItemUnavailable("bed", formData.bedId)) {
-            alert("Selected bed already occupied");
+            await showErrorPopup("Bed Occupied", "The selected bed is already occupied.");
             return;
         }
 
         if (formData.tableId && isItemUnavailable("table", formData.tableId)) {
-            alert("Selected table already allotted");
+            await showErrorPopup("Table Allotted", "The selected table is already allotted.");
             return;
         }
 
         if (formData.cupboardId && isItemUnavailable("cupboard", formData.cupboardId)) {
-            alert("Selected cupboard already allotted");
+            await showErrorPopup("Cupboard Allotted", "The selected cupboard is already allotted.");
             return;
         }
 
@@ -285,12 +293,15 @@ const StudentAllocation = () => {
         setAllocations(updatedAllocations);
         resetForm();
 
-        alert(editingId ? "Allocation Updated Successfully" : "Student Allocated Successfully");
+        await showSuccessPopup(
+            editingId ? "Allocation Updated" : "Student Allocated",
+            editingId ? "The allocation was updated successfully." : "The student was allocated successfully.",
+        );
     };
 
-    const continueBedOnlyAllocation = () => {
+    const continueBedOnlyAllocation = async () => {
         setBedOnlyModal(null);
-        saveAllocation(true);
+        await saveAllocation(true);
     };
 
     const editAllocation = (allocation) => {

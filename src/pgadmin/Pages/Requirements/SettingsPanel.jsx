@@ -3,6 +3,7 @@ import { Save } from "lucide-react";
 import AdminLayout from "../../Components/Layout/AdminLayout";
 import { PageHeader, ThemePanel } from "../../Components/Layout/ThemeElements";
 import { getPgSettings, savePgSettings } from "../../Utils/pgRequirementStore";
+import { showSuccessPopup } from "../../../utils/popup";
 
 const SettingsPanel = () => {
     const [settings, setSettings] = useState(getPgSettings());
@@ -10,7 +11,7 @@ const SettingsPanel = () => {
     const save = (event) => {
         event.preventDefault();
         savePgSettings(settings);
-        alert("Settings saved");
+        showSuccessPopup("Settings Saved", "PG settings saved successfully.");
     };
 
     return (

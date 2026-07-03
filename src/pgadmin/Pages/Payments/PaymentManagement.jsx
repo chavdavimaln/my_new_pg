@@ -4,6 +4,7 @@ import AdminLayout from "../../Components/Layout/AdminLayout";
 import ResponsiveSortableTable from "../../Components/Common/ResponsiveSortableTable";
 import { adminRoles, getCurrentAdmin, hasRole, isSuperAdmin } from "../../Utils/adminAuth";
 import { getStoredAllocations, getStoredStudents } from "../../Utils/allocationHelper";
+import { showConfirmPopup, showErrorPopup, showSuccessPopup } from "../../../utils/popup";
 import {
     calculateAllocationCharges,
     formatCurrency,
@@ -213,9 +214,9 @@ const PaymentManagement = () => {
         };
     };
 
-    const savePayment = () => {
+    const savePayment = async () => {
         if (!selectedAllocation) {
-            alert("Please select an allocated student");
+            await showErrorPopup("Allocation Required", "Please select an allocated student before saving payment.");
             return;
         }
 
@@ -239,6 +240,10 @@ const PaymentManagement = () => {
         setFormData(emptyPayment);
         setEditingPaymentId("");
         setReceiptDraft(makeReceipt(payment));
+        await showSuccessPopup(
+            editingPaymentId ? "Payment Updated" : "Payment Saved",
+            editingPaymentId ? "Payment record updated successfully." : "Payment record saved successfully.",
+        );
     };
 
     const editPayment = (payment) => {
@@ -252,15 +257,28 @@ const PaymentManagement = () => {
         setPayments(updatedPayments);
     };
 
-    const deletePayment = (paymentId) => {
-        if (!window.confirm("Delete this payment record?")) return;
+    const deletePayment = async (paymentId) => {
+        const confirmed = await showConfirmPopup({
+            title: "Delete Payment?",
+            text: "Delete this payment record? This action cannot be undone.",
+            confirmButtonText: "Delete Payment",
+        });
+        if (!confirmed) return;
         const updatedPayments = payments.filter((payment) => payment.id !== paymentId);
         saveStoredPayments(updatedPayments);
         setPayments(updatedPayments);
+        await showSuccessPopup("Payment Deleted", "Payment record deleted successfully.");
     };
 
-    const downloadReceipt = (receipt) => {
-        if (!window.confirm("Download this receipt with the current details?")) return;
+    const downloadReceipt = async (receipt) => {
+        const confirmed = await showConfirmPopup({
+            icon: "question",
+            title: "Download Receipt?",
+            text: "Download this receipt with the current details?",
+            confirmButtonText: "Download",
+            confirmButtonColor: "#16a34a",
+        });
+        if (!confirmed) return;
 
         const blob = new Blob([buildReceiptHtml(receipt)], { type: "text/html" });
         const link = document.createElement("a");
@@ -268,6 +286,7 @@ const PaymentManagement = () => {
         link.download = `${receipt.receiptNumber}.html`;
         link.click();
         URL.revokeObjectURL(link.href);
+        await showSuccessPopup("Receipt Downloaded", "Receipt download has started.");
     };
 
     const sendMail = (receipt) => {

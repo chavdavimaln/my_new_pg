@@ -24,6 +24,7 @@ import AdminLayout from "../../Components/Layout/AdminLayout";
 import { PageHeader, StatCard, StatusBadge, ThemePanel } from "../../Components/Layout/ThemeElements";
 import { getStaff, getTickets, saveTickets, todayISO } from "../../Utils/pgRequirementStore";
 import { getStoredAllocations, getStoredRooms, getStoredStudents } from "../../Utils/allocationHelper";
+import { showConfirmPopup, showErrorPopup, showSuccessPopup } from "../../../utils/popup";
 
 const categories = [
     "Electrical",
@@ -241,18 +242,22 @@ const MaintenanceTickets = () => {
         setAdminNote("");
     };
 
-    const saveModalTicket = () => {
+    const saveModalTicket = async () => {
         if (!modalTicket) return;
         if (!modalDraft.studentName || !modalDraft.roomNumber || !modalDraft.issueLocationType || !modalDraft.issueLocationDetail) {
-            alert("Student, room, affected location type, and affected location detail are required.");
+            await showErrorPopup(
+                "Ticket Details Required",
+                "Student, room, affected location type, and affected location detail are required.",
+            );
             return;
         }
         if (modalDraft.assignedStaff === "__other__" && (!modalDraft.thirdPartyName || !modalDraft.thirdPartyPhone)) {
-            alert("Third-party name and phone number are required.");
+            await showErrorPopup("Third-Party Details Required", "Third-party name and phone number are required.");
             return;
         }
         updateTicket(modalTicket.id, { ...modalDraft, resolvedPhoto: ["Resolved", "Closed"].includes(modalDraft.status) ? modalDraft.resolvedPhoto : "" }, { type: "Admin", text: "Ticket updated from popup" });
         setModalMode("view");
+        await showSuccessPopup("Ticket Updated", "Ticket details updated successfully.");
     };
 
     const openCreate = () => {
@@ -264,11 +269,14 @@ const MaintenanceTickets = () => {
     const submitTicket = async (event) => {
         event.preventDefault();
         if (!form.studentName || !form.roomNumber || !form.issueLocationType || !form.issueLocationDetail) {
-            alert("Student, room, affected location type, and affected location detail are required.");
+            await showErrorPopup(
+                "Ticket Details Required",
+                "Student, room, affected location type, and affected location detail are required.",
+            );
             return;
         }
         if (form.assignedStaff === "__other__" && (!form.thirdPartyName || !form.thirdPartyPhone)) {
-            alert("Third-party name and phone number are required.");
+            await showErrorPopup("Third-Party Details Required", "Third-party name and phone number are required.");
             return;
         }
         const ticketId = editingTicket?.id || Date.now();
@@ -292,23 +300,44 @@ const MaintenanceTickets = () => {
         setEditingTicket(null);
         setForm(emptyForm);
         setActiveTab("All Tickets");
+        await showSuccessPopup(
+            editingTicket ? "Ticket Updated" : "Ticket Created",
+            editingTicket ? "Ticket updated successfully." : "Ticket created successfully.",
+        );
     };
 
-    const deleteTicket = (ticket) => {
-        if (!window.confirm(`Delete ${ticket.ticketId}? This cannot be undone.`)) return false;
+    const deleteTicket = async (ticket) => {
+        const confirmed = await showConfirmPopup({
+            title: "Delete Ticket?",
+            text: `Delete ${ticket.ticketId}? This action cannot be undone.`,
+            confirmButtonText: "Delete Ticket",
+        });
+        if (!confirmed) return false;
         saveAllTickets(tickets.filter((item) => String(item.id) !== String(ticket.id)));
         if (String(selectedTicketId) === String(ticket.id)) setSelectedTicketId("");
+        await showSuccessPopup("Ticket Deleted", `${ticket.ticketId} deleted successfully.`);
         return true;
     };
 
-    const closeTicket = (ticket) => {
-        if (!window.confirm(`Close ${ticket.ticketId}?`)) return;
+    const closeTicket = async (ticket) => {
+        const confirmed = await showConfirmPopup({
+            icon: "question",
+            title: "Close Ticket?",
+            text: `Close ${ticket.ticketId}?`,
+            confirmButtonText: "Close Ticket",
+            confirmButtonColor: "#16a34a",
+        });
+        if (!confirmed) return;
         updateTicket(ticket.id, { status: "Closed", closedDate: todayISO() }, { type: "Admin", text: "Ticket closed" });
+        await showSuccessPopup("Ticket Closed", `${ticket.ticketId} closed successfully.`);
     };
 
     const changeResolvedPhoto = async (ticket, file) => {
         if (!["Resolved", "Closed"].includes(ticket.status)) {
-            alert("Resolved photo can be uploaded only after the ticket status is Resolved or Closed.");
+            await showErrorPopup(
+                "Photo Upload Locked",
+                "Resolved photo can be uploaded only after the ticket status is Resolved or Closed.",
+            );
             return;
         }
         const resolvedPhoto = await readFileAsDataUrl(file);

@@ -5,6 +5,7 @@ import AdminLayout from "../../Components/Layout/AdminLayout";
 import { getAdminUsers, getPermissionsForRoles, getRoleLabels, privilegeOptions } from "../../Utils/adminAuth";
 import { pgPath } from "../../Utils/pgBrand";
 import { recordHistory } from "../../Utils/historyStore";
+import { showErrorPopup, showInfoPopup, showSuccessPopup } from "../../../utils/popup";
 
 const buildMessage = (admin) => `Hello ${admin.name}, this message is from Jay Ambe PG admin panel.`;
 
@@ -15,9 +16,12 @@ const copyManualMessage = async (admin, channel) => {
 
     try {
         await navigator.clipboard.writeText(text);
-        alert(`${channel === "email" ? "Email" : "WhatsApp"} message copied for manual sending`);
+        await showSuccessPopup(
+            "Message Copied",
+            `${channel === "email" ? "Email" : "WhatsApp"} message copied for manual sending.`,
+        );
     } catch {
-        alert(text);
+        await showInfoPopup("Manual Message", text);
     }
 
     recordHistory({
@@ -32,7 +36,7 @@ const copyManualMessage = async (admin, channel) => {
 
 const sendDirectEmail = (admin) => {
     if (!admin.email) {
-        alert("Email address is not available for this user");
+        showErrorPopup("Email Not Available", "Email address is not available for this user.");
         return;
     }
     recordHistory({ module: "Admins", entityType: "Admin User", entityId: admin.id, entityName: admin.name, action: "Email Opened", after: { email: admin.email } });
@@ -41,7 +45,7 @@ const sendDirectEmail = (admin) => {
 
 const sendDirectWhatsApp = (admin) => {
     if (!admin.mobile) {
-        alert("Mobile number is not available for this user");
+        showErrorPopup("Mobile Not Available", "Mobile number is not available for this user.");
         return;
     }
     const phone = String(admin.mobile).replace(/\D/g, "");
