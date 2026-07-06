@@ -12,10 +12,17 @@ Use this file:
 database/mysql/jay_ambe_pg_schema.sql
 ```
 
+For the complete Income / Payments workspace, also import:
+
+```text
+database/mysql/income_payment_schema.sql
+```
+
 Command:
 
 ```bash
 mysql -u your_mysql_user -p < database/mysql/jay_ambe_pg_schema.sql
+mysql -u your_mysql_user -p < database/mysql/income_payment_schema.sql
 ```
 
 The schema creates:
@@ -116,6 +123,32 @@ Payments, billing, invoices:
 - `POST /invoices`
 - `GET /invoices/:id/pdf`
 - Tables: `payment_settings`, `payments`, `payment_line_items`, `invoices`, `invoice_items`, `entity_history`
+
+Income / Payments full module:
+
+- `GET /income/dashboard`
+- `GET /income/fee-structures`
+- `PUT /income/fee-structures/:id`
+- `GET /income/pricing-plans`
+- `POST /income/payment-orders`
+- `GET /income/payment-orders`
+- `POST /income/collections`
+- `GET /income/pending-payments`
+- `POST /income/reminders`
+- `POST /income/messages/send-email`
+- `POST /income/messages/send-whatsapp`
+- `GET /income/security-deposits`
+- `POST /income/refunds`
+- `GET /income/discounts`
+- `POST /income/discounts`
+- `POST /income/calculate-payment`
+- `GET /income/penalty-rules`
+- `GET /income/staff-salaries`
+- `PUT /income/staff-salaries/:staffId`
+- `POST /income/online-payments`
+- `GET /income/reports/monthly`
+- Tables: `payment_fee_structures`, `payment_pricing_plans`, `payment_charge_catalog`, `income_payment_orders`, `income_payment_order_items`, `income_payment_collections`, `payment_gateways`, `online_payment_transactions`, `staff_salary_setups`, `security_deposit_ledger`, `refund_requests`, `discount_rules`, `payment_penalty_rules`, `payment_reminders`, `payment_message_templates`, `payment_message_logs`
+- Full docs: `docs/INCOME_PAYMENT_API_AND_DATABASE.md`
 
 Expenses and reports:
 

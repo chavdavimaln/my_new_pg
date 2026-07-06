@@ -49,6 +49,7 @@ const PgAdminRoutes = () => (
         <Route path="property" element={protectedPage(<PropertyManagement />)} />
         <Route path="admissions" element={protectedPage(<AdmissionManagement />)} />
         <Route path="payment-operations" element={protectedPage(<PaymentOperations />)} />
+        <Route path="payment-operations/:incomePage" element={protectedPage(<PaymentOperations />)} />
         <Route path="accounting" element={protectedPage(<AccountingManagement />)} />
         <Route path="inquiries" element={protectedPage(<Inquiries />)} />
         <Route path="tickets" element={protectedPage(<MaintenanceTickets />)} />

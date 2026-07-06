@@ -115,8 +115,9 @@ export const formatCurrency = (value) =>
     new Intl.NumberFormat("en-IN", {
         style: "currency",
         currency: "INR",
-        maximumFractionDigits: 2,
-    }).format(toAmount(value));
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0,
+    }).format(Math.round(toAmount(value)));
 
 const lineDefinitions = [
     { key: "monthlyRent", qtyKey: "monthlyRentQty", label: "Monthly Rent", editableQuantity: true },

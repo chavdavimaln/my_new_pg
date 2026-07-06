@@ -99,6 +99,39 @@ Payments, income, invoices:
 - `POST /invoices`
 - `GET /invoices/:id/pdf`
 
+Income / Payments full workspace:
+
+- `GET /income/dashboard`
+- `GET /income/fee-structures`
+- `PUT /income/fee-structures/:id`
+- `GET /income/pricing-plans`
+- `PUT /income/pricing-plans/:id`
+- `POST /income/payment-orders`
+- `GET /income/payment-orders`
+- `POST /income/collections`
+- `GET /income/pending-payments`
+- `POST /income/reminders`
+- `POST /income/messages/send-email`
+- `POST /income/messages/send-whatsapp`
+- `GET /income/message-logs`
+- `GET /income/security-deposits`
+- `POST /income/refunds`
+- `GET /income/discounts`
+- `POST /income/discounts`
+- `POST /income/calculate-payment`
+- `GET /income/penalty-rules`
+- `GET /income/staff-salaries`
+- `PUT /income/staff-salaries/:staffId`
+- `POST /income/online-payments`
+- `GET /income/reports/payment-method-wise`
+
+See:
+
+```text
+docs/INCOME_PAYMENT_API_AND_DATABASE.md
+database/mysql/income_payment_schema.sql
+```
+
 Expenses:
 
 - `GET /expenses`
